@@ -49,7 +49,14 @@ object DataOutput {
     @inline def buffer = bout.buffer
 
     @inline def position = bout.position
-    @inline def position_=(value: Int) { bout.position = value }
+    @inline def position_=(value: Int) {
+      bout.position = value
+      // ideally, `written` would not exist, and we could just direct `size` to `bout.size`, but unfortunately
+      // `size` is final. so all we can do to minimise damage, is reset written to the buffer offset. that
+      // way `size` on this object will not include bytes after the write position. but that should be
+      // consensus anyway.
+      written       = value
+    }
 
     def asOutputStream: OutputStream = this
   }

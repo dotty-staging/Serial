@@ -43,6 +43,7 @@ final class ByteArrayOutputStream(initialSize: Int = 128) extends OutputStream w
 
   def reset() {
     _pos = 0
+    _len = 0
   }
 
   def position = _pos
