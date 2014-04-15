@@ -1,26 +1,26 @@
 name := "Serial"
 
-version in ThisBuild := "1.0.2-SNAPSHOT"
+version      in ThisBuild := "1.0.2-SNAPSHOT"
 
 organization in ThisBuild := "de.sciss"
 
-description in ThisBuild := "Extension of Scala-STM, adding optional durability layer, and providing API for confluent and reactive event layers"
+description  in ThisBuild := "Extension of Scala-STM, adding optional durability layer, and providing API for confluent and reactive event layers"
 
-homepage in ThisBuild <<= name { n => Some(url("https://github.com/Sciss/" + n)) }
+homepage     in ThisBuild := Some(url("https://github.com/Sciss/" + name.value))
 
-licenses in ThisBuild := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
+licenses     in ThisBuild := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
 
-scalaVersion in ThisBuild := "2.11.0-RC3"
+scalaVersion in ThisBuild := "2.11.0-RC4"
 
-crossScalaVersions in ThisBuild := Seq("2.11.0-RC3", "2.10.3")
+crossScalaVersions in ThisBuild := Seq("2.11.0-RC4", "2.10.4")
 
 libraryDependencies in ThisBuild ++= Seq(
-  "org.scalatest" %% "scalatest" % "2.1.2" % "test"
+  "org.scalatest" %% "scalatest" % "2.1.3" % "test"
 )
 
 // retrieveManaged in ThisBuild := true
 
-scalacOptions in ThisBuild ++= Seq("-deprecation", "-unchecked", "-feature")
+scalacOptions in ThisBuild ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture")
 
 scalacOptions in ThisBuild += "-no-specialization"  // never use this shit. will give you runtime IllegalAccessErrors in random places of the future. do _not_ use specialization. ever. don't diminish your life expectancy.
 
@@ -52,11 +52,11 @@ pomExtra in ThisBuild <<= name { n =>
   <connection>scm:git:git@github.com:Sciss/{n}.git</connection>
 </scm>
 <developers>
-   <developer>
-      <id>sciss</id>
-      <name>Hanns Holger Rutz</name>
-      <url>http://www.sciss.de</url>
-   </developer>
+  <developer>
+    <id>sciss</id>
+    <name>Hanns Holger Rutz</name>
+    <url>http://www.sciss.de</url>
+  </developer>
 </developers>
 }
 
@@ -64,8 +64,8 @@ pomExtra in ThisBuild <<= name { n =>
 
 seq(lsSettings :_*)
 
-(LsKeys.tags in LsKeys.lsync) := Seq("stm", "software-transactional-memory", "persistent")
+(LsKeys.tags   in LsKeys.lsync) := Seq("stm", "software-transactional-memory", "persistent")
 
 (LsKeys.ghUser in LsKeys.lsync) := Some("Sciss")
 
-(LsKeys.ghRepo in LsKeys.lsync) <<= name(Some(_))
+(LsKeys.ghRepo in LsKeys.lsync) := Some(name.value)

@@ -2,25 +2,13 @@
  *  ByteArrayOutputStream.scala
  *  (Serial)
  *
- *  Copyright (c) 2011-2013 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software is published under the GNU Lesser General Public License v2.1+
  *
  *
- *  For further information, please contact Hanns Holger Rutz at
- *  contact@sciss.de
+ * For further information, please contact Hanns Holger Rutz at
+ * contact@sciss.de
  */
 
 package de.sciss.serial.impl
@@ -41,25 +29,25 @@ final class ByteArrayOutputStream(initialSize: Int = 128) extends OutputStream w
 
   def size: Int = _len
 
-  def reset() {
+  def reset(): Unit = {
     _pos = 0
     _len = 0
   }
 
   def position = _pos
-  def position_=(value: Int) {
+  def position_=(value: Int): Unit = {
     if (value < 0 || value > _len) throw new IndexOutOfBoundsException(value.toString)
     _pos = value
   }
 
-  def write(b: Int) {
+  def write(b: Int): Unit = {
     if (_pos == buf.length) alloc(1)
     buf(_pos)  = b.toByte
     _pos += 1
     if (_pos > _len) _len = _pos
   }
 
-  override def write(in: Array[Byte], inOff: Int, inLen: Int) {
+  override def write(in: Array[Byte], inOff: Int, inLen: Int): Unit = {
     val needed = _pos + inLen - buf.length
     if (needed > 0) alloc(needed)
 
@@ -81,7 +69,7 @@ final class ByteArrayOutputStream(initialSize: Int = 128) extends OutputStream w
     */
   def buffer: Array[Byte] = buf
 
-  private def alloc(needed: Int) {
+  private def alloc(needed: Int): Unit = {
     val newLen = (buf.length << 1) + needed
     val newBuf = new Array[Byte](newLen)
     System.arraycopy(buf, 0, newBuf, 0, _len)

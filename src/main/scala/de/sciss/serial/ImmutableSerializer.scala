@@ -2,32 +2,20 @@
  *  Serializer.scala
  *  (Serial)
  *
- *  Copyright (c) 2011-2013 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
  *
- *  This library is free software; you can redistribute it and/or
- *  modify it under the terms of the GNU Lesser General Public
- *  License as published by the Free Software Foundation; either
- *  version 2.1 of the License, or (at your option) any later version.
- *
- *  This library is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- *  Lesser General Public License for more details.
- *
- *  You should have received a copy of the GNU Lesser General Public
- *  License along with this library; if not, write to the Free Software
- *  Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * This software is published under the GNU Lesser General Public License v2.1+
  *
  *
- *  For further information, please contact Hanns Holger Rutz at
- *  contact@sciss.de
+ * For further information, please contact Hanns Holger Rutz at
+ * contact@sciss.de
  */
 
 package de.sciss
 package serial
 
 import annotation.switch
-import collection.immutable.{IndexedSeq => IIdxSeq}
+import collection.immutable.{IndexedSeq => Vec}
 import collection.mutable
 import scala.{specialized => spec}
 import serial.{SpecGroup => ialized}
@@ -37,70 +25,54 @@ object ImmutableSerializer {
   // ---- primitives ----
 
   implicit object Unit extends ImmutableSerializer[scala.Unit] {
-    def write(v: scala.Unit, out: DataOutput) {}
-    def read(in: DataInput) {}
+    def write(v: scala.Unit, out: DataOutput): Unit = ()
+    def read(in: DataInput): Unit = ()
   }
 
   implicit object Boolean extends ImmutableSerializer[scala.Boolean] {
-    def write(v: scala.Boolean, out: DataOutput) {
-      out.writeBoolean(v)
-    }
+    def write(v: scala.Boolean, out: DataOutput): Unit = out.writeBoolean(v)
 
     def read(in: DataInput): scala.Boolean = in.readBoolean()
   }
 
   implicit object Char extends ImmutableSerializer[scala.Char] {
-    def write(v: scala.Char, out: DataOutput) {
-      out.writeChar(v)
-    }
+    def write(v: scala.Char, out: DataOutput): Unit = out.writeChar(v)
 
     def read(in: DataInput): scala.Char = in.readChar()
   }
 
   implicit object Int extends ImmutableSerializer[scala.Int] {
-    def write(v: scala.Int, out: DataOutput) {
-      out.writeInt(v)
-    }
+    def write(v: scala.Int, out: DataOutput): Unit = out.writeInt(v)
 
     def read(in: DataInput): scala.Int = in.readInt()
   }
 
   implicit object Float extends ImmutableSerializer[scala.Float] {
-    def write(v: scala.Float, out: DataOutput) {
-      out.writeFloat(v)
-    }
+    def write(v: scala.Float, out: DataOutput): Unit = out.writeFloat(v)
 
     def read(in: DataInput): scala.Float = in.readFloat()
   }
 
   implicit object Long extends ImmutableSerializer[scala.Long] {
-    def write(v: scala.Long, out: DataOutput) {
-      out.writeLong(v)
-    }
+    def write(v: scala.Long, out: DataOutput): Unit = out.writeLong(v)
 
     def read(in: DataInput): scala.Long = in.readLong()
   }
 
   implicit object Double extends ImmutableSerializer[scala.Double] {
-    def write(v: scala.Double, out: DataOutput) {
-      out.writeDouble(v)
-    }
+    def write(v: scala.Double, out: DataOutput): Unit = out.writeDouble(v)
 
     def read(in: DataInput): scala.Double = in.readDouble()
   }
 
   implicit object String extends ImmutableSerializer[java.lang.String] {
-    def write(v: java.lang.String, out: DataOutput) {
-      out.writeUTF(v)
-    }
+    def write(v: java.lang.String, out: DataOutput): Unit = out.writeUTF(v)
 
     def read(in: DataInput): java.lang.String = in.readUTF()
   }
 
   implicit object File extends ImmutableSerializer[java.io.File] {
-    def write(v: java.io.File, out: DataOutput) {
-      out.writeUTF(v.getPath)
-    }
+    def write(v: java.io.File, out: DataOutput): Unit = out.writeUTF(v.getPath)
 
     def read(in: DataInput): java.io.File = new java.io.File(in.readUTF())
   }
@@ -111,9 +83,7 @@ object ImmutableSerializer {
     new ReaderWrapper(reader)
 
   private final class ReaderWrapper[A <: Writable](reader: ImmutableReader[A]) extends ImmutableSerializer[A] {
-    def write(v: A, out: DataOutput) {
-      v.write(out)
-    }
+    def write(v: A, out: DataOutput): Unit = v.write(out)
 
     def read(in: DataInput): A = reader.read(in)
   }
@@ -127,12 +97,11 @@ object ImmutableSerializer {
   private final class OptionWrapper[A](peer: ImmutableSerializer[A])
     extends ImmutableSerializer[Option[A]] {
 
-    def write(opt: Option[A], out: DataOutput) {
+    def write(opt: Option[A], out: DataOutput): Unit = 
       opt match {
-        case Some(v) => out.writeByte(1); peer.write(v, out)
-        case _ => out.writeByte(0)
+        case Some(v)  => out.writeByte(1); peer.write(v, out)
+        case _        => out.writeByte(0)
       }
-    }
 
     def read(in: DataInput): Option[A] = (in.readByte(): @switch) match {
       case 1 => Some(peer.read(in))
@@ -149,12 +118,11 @@ object ImmutableSerializer {
   private final class EitherWrapper[A, B](peer1: ImmutableSerializer[A], peer2: ImmutableSerializer[B])
     extends ImmutableSerializer[Either[A, B]] {
 
-    def write(eith: Either[A, B], out: DataOutput) {
-      eith match {
+    def write(either: Either[A, B], out: DataOutput): Unit =
+      either match {
         case Left (a) => out.writeByte(0); peer1.write(a, out)
         case Right(b) => out.writeByte(1); peer2.write(b, out)
       }
-    }
 
     def read(in: DataInput): Either[A, B] = (in.readByte(): @switch) match {
       case 0 => Left (peer1.read(in))
@@ -170,7 +138,7 @@ object ImmutableSerializer {
                                                                           peer2: ImmutableSerializer[A2])
     extends ImmutableSerializer[(A1, A2)] {
 
-    def write(tup: (A1, A2), out: DataOutput) {
+    def write(tup: (A1, A2), out: DataOutput): Unit = {
       peer1.write(tup._1, out)
       peer2.write(tup._2, out)
     }
@@ -192,7 +160,7 @@ object ImmutableSerializer {
                                                 peer3: ImmutableSerializer[A3])
     extends ImmutableSerializer[(A1, A2, A3)] {
 
-    def write(tup: (A1, A2, A3), out: DataOutput) {
+    def write(tup: (A1, A2, A3), out: DataOutput): Unit = {
       peer1.write(tup._1, out)
       peer2.write(tup._2, out)
       peer3.write(tup._3, out)
@@ -211,7 +179,7 @@ object ImmutableSerializer {
 
   implicit def set[A](implicit peer: ImmutableSerializer[A]): ImmutableSerializer[Set[A]] = new SetSerializer[A](peer)
 
-  implicit def indexedSeq[A](implicit peer: ImmutableSerializer[A]): ImmutableSerializer[IIdxSeq[A]] =
+  implicit def indexedSeq[A](implicit peer: ImmutableSerializer[A]): ImmutableSerializer[Vec[A]] =
     new IndexedSeqSerializer[A](peer)
 
   implicit def map[A, B](implicit peer: ImmutableSerializer[(A, B)]): ImmutableSerializer[Map[A, B]] =
@@ -223,7 +191,7 @@ object ImmutableSerializer {
 
     def peer: ImmutableSerializer[A]
 
-    final def write(coll: That, out: DataOutput) {
+    final def write(coll: That, out: DataOutput): Unit = {
       out.writeInt(coll.size)
       val ser = peer
       coll.foreach(ser.write(_, out))
@@ -252,15 +220,14 @@ object ImmutableSerializer {
   }
 
   private final class IndexedSeqSerializer[A](val peer: ImmutableSerializer[A])
-    extends CollectionSerializer[A, IIdxSeq[A]] {
-    def newBuilder = IIdxSeq.newBuilder[A]
+    extends CollectionSerializer[A, Vec[A]] {
+    def newBuilder = Vec.newBuilder[A]
   }
 
   private final class MapSerializer[A, B](val peer: ImmutableSerializer[(A, B)])
     extends CollectionSerializer[(A, B), Map[A, B]] {
     def newBuilder = Map.newBuilder[A, B]
   }
-
 }
 
 trait ImmutableSerializer[@spec(ialized) A] extends ImmutableReader[A] with Serializer[Any, Any, A]
