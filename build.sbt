@@ -1,6 +1,6 @@
 name := "Serial"
 
-version      in ThisBuild := "1.0.2-SNAPSHOT"
+version      in ThisBuild := "1.0.2"
 
 organization in ThisBuild := "de.sciss"
 
@@ -18,7 +18,7 @@ libraryDependencies in ThisBuild ++= Seq(
   "org.scalatest" %% "scalatest" % "2.1.3" % "test"
 )
 
-// retrieveManaged in ThisBuild := true
+retrieveManaged in ThisBuild := true
 
 scalacOptions in ThisBuild ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture")
 
