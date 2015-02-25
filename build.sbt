@@ -1,6 +1,6 @@
 name := "Serial"
 
-version      in ThisBuild := "1.0.2"
+version      in ThisBuild := "1.0.3-SNAPSHOT"
 
 organization in ThisBuild := "de.sciss"
 
@@ -10,16 +10,14 @@ homepage     in ThisBuild := Some(url("https://github.com/Sciss/" + name.value))
 
 licenses     in ThisBuild := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
 
-scalaVersion in ThisBuild := "2.11.0"
+scalaVersion in ThisBuild := "2.11.5"
 
-crossScalaVersions in ThisBuild := Seq("2.11.0", "2.10.4")
+crossScalaVersions in ThisBuild := Seq("2.11.5", "2.10.4")
 
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "2.1.3" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
 
-retrieveManaged in ThisBuild := true
-
-scalacOptions in ThisBuild ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture")
+scalacOptions in ThisBuild ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8")
 
 scalacOptions in ThisBuild += "-no-specialization"  // never use this shit. will give you runtime IllegalAccessErrors in random places of the future. do _not_ use specialization. ever. don't diminish your life expectancy.
 
@@ -29,12 +27,21 @@ testOptions in Test += Tests.Argument("-oDF")   // ScalaTest: durations and full
 
 parallelExecution in Test := false
 
+// ---- test ----
+
+testListeners in ThisBuild += new TestReportListener {
+  def endGroup(name: String, result: TestResult.Value): Unit = println(s"End Group $name (succeeded)")
+  def endGroup(name: String, t: Throwable): Unit = println(s"End Group $name (failed)")
+  def startGroup(name: String): Unit = println(s"Start Group $name")
+  def testEvent(event: TestEvent): Unit = println(s"Test Event: ${event.result}")
+}
+
 // ---- publishing ----
 
 publishMavenStyle in ThisBuild := true
 
 publishTo in ThisBuild :=
-  Some(if (version.value endsWith "-SNAPSHOT")
+  Some(if (isSnapshot.value)
     "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
   else
     "Sonatype Releases"  at "https://oss.sonatype.org/service/local/staging/deploy/maven2"
