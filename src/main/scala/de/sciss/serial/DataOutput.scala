@@ -43,10 +43,13 @@ object DataOutput {
       // `size` is final. so all we can do to minimise damage, is reset written to the buffer offset. that
       // way `size` on this object will not include bytes after the write position. but that should be
       // consensus anyway.
-      written       = value
+      written = value
     }
 
-    def writePackedInt(v: Int): Unit = bout.writePackedInt(v)
+    def writePackedInt(v: Int): Unit = {
+      bout.writePackedInt(v)
+      written = bout.size
+    }
 
     def asOutputStream: OutputStream = this
   }

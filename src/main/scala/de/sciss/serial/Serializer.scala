@@ -137,12 +137,14 @@ object Serializer {
 
     final def write(coll: That, out: DataOutput): Unit = {
       out.writePackedInt(coll.size)
+      // out.writeInt(coll.size)
       val ser = peer
       coll.foreach(ser.write(_, out))
     }
 
     final def read(in: DataInput, acc: Acc)(implicit tx: Tx): That = {
       var sz = in.readPackedInt()
+      // var sz = in.readInt()
       val b = newBuilder
       val ser = peer
       while (sz > 0) {

@@ -29,12 +29,14 @@ parallelExecution in Test := false
 
 // ---- test ----
 
+/*
 testListeners in ThisBuild += new TestReportListener {
   def endGroup(name: String, result: TestResult.Value): Unit = println(s"End Group $name (succeeded)")
   def endGroup(name: String, t: Throwable): Unit = println(s"End Group $name (failed)")
   def startGroup(name: String): Unit = println(s"Start Group $name")
   def testEvent(event: TestEvent): Unit = println(s"Test Event: ${event.result}")
 }
+*/
 
 // ---- publishing ----
 
