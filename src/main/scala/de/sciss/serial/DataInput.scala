@@ -13,8 +13,8 @@
 
 package de.sciss.serial
 
-import impl.{FileWrapperImpl, ByteArrayInputStream}
-import java.io.{InputStream, DataInputStream, Closeable, File}
+import de.sciss.serial.impl.{Packed, FileWrapperImpl, ByteArrayInputStream}
+import java.io.{EOFException, InputStream, DataInputStream, Closeable, File}
 
 object DataInput {
   def apply(buf: Array[Byte]): DataInput with ByteArrayStream = apply(buf, 0, buf.length)
@@ -35,12 +35,26 @@ object DataInput {
     @inline def size        = bin.size
     @inline def buffer      = bin.buffer
 
+    def readPackedInt(): Int = {
+      val buf = buffer
+      val pos = position
+      val len = Packed.getReadLength(buf, pos)
+      if (pos + len > size) throw new EOFException
+      bin.skipInt(len)
+      Packed.getInt(buf, pos)
+    }
+
     def asInputStream: InputStream = this
   }
 
   private final class FileImpl(file: File)
-    extends FileWrapperImpl(file, "r") with DataInput
+    extends FileWrapperImpl(file, "r") with DataInput {
+
+    def readPackedInt(): Int = ???
+  }
 }
 trait DataInput extends java.io.DataInput with RandomAccess {
   def asInputStream: InputStream
+
+  def readPackedInt(): Int
 }

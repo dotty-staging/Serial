@@ -40,7 +40,7 @@ private[impl] final class FileOutputStreamImpl(peer: RandomAccessFile) extends O
 }
 
 private[serial] abstract class FileWrapperImpl(file: File, mode: String)
-  extends RandomAccessFile(file, mode) with DataInput with DataOutput {
+  extends RandomAccessFile(file, mode) /* with DataInput with DataOutput */ {
 
   final def asInputStream : InputStream  = new FileInputStreamImpl (this)
   final def asOutputStream: OutputStream = new FileOutputStreamImpl(this)

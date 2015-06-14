@@ -14,11 +14,11 @@
 package de.sciss
 package serial
 
-import collection.immutable.{IndexedSeq => IIdxSeq}
-import collection.mutable
-import annotation.switch
+import de.sciss.serial.{SpecGroup => ialized}
+
+import scala.collection.immutable.{IndexedSeq => IIdxSeq}
+import scala.collection.mutable
 import scala.{specialized => spec}
-import serial.{SpecGroup => ialized}
 
 object Serializer {
   implicit final val Unit    = ImmutableSerializer.Unit
@@ -47,7 +47,7 @@ object Serializer {
         case _        => out.writeByte(0)
       }
 
-    def read(in: DataInput, acc: Acc)(implicit tx: Tx): Option[A] = (in.readByte(): @switch) match {
+    def read(in: DataInput, acc: Acc)(implicit tx: Tx): Option[A] = in.readByte() /* : @switch */ match {
       case 1 => Some(peer.read(in, acc))
       case 0 => None
     }
@@ -67,7 +67,7 @@ object Serializer {
         case Right(b) => out.writeByte(1); peer2.write(b, out)
       }
 
-    def read(in: DataInput, acc: Acc)(implicit tx: Tx): Either[A, B] = (in.readByte(): @switch) match {
+    def read(in: DataInput, acc: Acc)(implicit tx: Tx): Either[A, B] = in.readByte() /* : @switch */ match {
       case 0 => Left (peer1.read(in, acc))
       case 1 => Right(peer2.read(in, acc))
     }
@@ -136,13 +136,13 @@ object Serializer {
     def peer: Serializer[Tx, Acc, A]
 
     final def write(coll: That, out: DataOutput): Unit = {
-      out.writeInt(coll.size)
+      out.writePackedInt(coll.size)
       val ser = peer
       coll.foreach(ser.write(_, out))
     }
 
     final def read(in: DataInput, acc: Acc)(implicit tx: Tx): That = {
-      var sz = in.readInt()
+      var sz = in.readPackedInt()
       val b = newBuilder
       val ser = peer
       while (sz > 0) {

@@ -46,11 +46,17 @@ object DataOutput {
       written       = value
     }
 
+    def writePackedInt(v: Int): Unit = bout.writePackedInt(v)
+
     def asOutputStream: OutputStream = this
   }
 
-  private final class FileImpl(file: File) extends FileWrapperImpl(file, "rw") with DataOutput
+  private final class FileImpl(file: File) extends FileWrapperImpl(file, "rw") with DataOutput {
+    def writePackedInt(v: Int): Unit = ???
+  }
 }
 trait DataOutput extends java.io.DataOutput with RandomAccess {
   def asOutputStream: OutputStream
+
+  def writePackedInt(v: Int): Unit
 }

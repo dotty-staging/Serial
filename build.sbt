@@ -1,6 +1,6 @@
 name := "Serial"
 
-version      in ThisBuild := "1.0.3-SNAPSHOT"
+version      in ThisBuild := "1.1.0-SNAPSHOT"
 
 organization in ThisBuild := "de.sciss"
 
@@ -10,12 +10,12 @@ homepage     in ThisBuild := Some(url("https://github.com/Sciss/" + name.value))
 
 licenses     in ThisBuild := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
 
-scalaVersion in ThisBuild := "2.11.5"
+scalaVersion in ThisBuild := "2.11.6"
 
-crossScalaVersions in ThisBuild := Seq("2.11.5", "2.10.4")
+crossScalaVersions in ThisBuild := Seq("2.11.6", "2.10.5")
 
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  "org.scalatest" %% "scalatest" % "2.2.5" % "test"
 
 scalacOptions in ThisBuild ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8")
 
@@ -67,10 +67,6 @@ pomExtra in ThisBuild := { val n = name.value
 
 // ---- ls.implicit.ly ----
 
-seq(lsSettings :_*)
-
-(LsKeys.tags   in LsKeys.lsync) := Seq("stm", "software-transactional-memory", "persistent")
-
-(LsKeys.ghUser in LsKeys.lsync) := Some("Sciss")
-
-(LsKeys.ghRepo in LsKeys.lsync) := Some(name.value)
+// (LsKeys.tags   in LsKeys.lsync) := Seq("stm", "software-transactional-memory", "persistent")
+// (LsKeys.ghUser in LsKeys.lsync) := Some("Sciss")
+// (LsKeys.ghRepo in LsKeys.lsync) := Some(name.value)

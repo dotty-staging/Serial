@@ -16,11 +16,13 @@ package de.sciss.serial.impl
 import java.io.InputStream
 import de.sciss.serial.ByteArrayStream
 
+import scala.annotation.meta.field
+
 /** A non-synchronized alternative to `java.io.ByteArrayInputStream` */
-final class ByteArrayInputStream(val buffer: Array[Byte], off: Int, val size: Int)
+final class ByteArrayInputStream(@field val buffer: Array[Byte], off: Int, @field val size: Int)
   extends InputStream with ByteArrayStream {
 
-  private var _off = off
+  @field private var _off = off
 
   def this(buf: Array[Byte]) = this(buf, 0, buf.length)
 
@@ -58,4 +60,6 @@ final class ByteArrayInputStream(val buffer: Array[Byte], off: Int, val size: In
     _off += res
     res
   }
+
+  def skipInt(i: Int): Unit = _off += i
 }

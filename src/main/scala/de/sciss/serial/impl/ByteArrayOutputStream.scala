@@ -16,16 +16,16 @@ package de.sciss.serial.impl
 import java.io.OutputStream
 import de.sciss.serial.ByteArrayStream
 
-/**
- * A non-synchronized alternative to `java.io.ByteArrayOutputStream`.
- */
+import scala.annotation.meta.field
+
+/** A non-synchronized alternative to `java.io.ByteArrayOutputStream`. */
 object ByteArrayOutputStream {
   private final val emptyBuf = new Array[Byte](0)
 }
 final class ByteArrayOutputStream(initialSize: Int = 128) extends OutputStream with ByteArrayStream {
-  private var buf = new Array[Byte](initialSize)
-  private var _pos = 0
-  private var _len = 0
+  @field private[this] var buf = new Array[Byte](initialSize)
+  @field private[this] var _pos = 0
+  @field private[this] var _len = 0
 
   def size: Int = _len
 
@@ -56,6 +56,12 @@ final class ByteArrayOutputStream(initialSize: Int = 128) extends OutputStream w
     if (_pos > _len) _len = _pos
   }
 
+  def writePackedInt(v: Int): Unit = {
+    if (_pos + 5 >= buf.length) alloc(5)
+    _pos += Packed.putInt(v, buf, _pos)
+    if (_pos > _len) _len = _pos
+  }
+
   def toByteArray: Array[Byte] = {
     if (_len == 0) return ByteArrayOutputStream.emptyBuf
 
@@ -69,7 +75,7 @@ final class ByteArrayOutputStream(initialSize: Int = 128) extends OutputStream w
     */
   def buffer: Array[Byte] = buf
 
-  private def alloc(needed: Int): Unit = {
+  private[this] def alloc(needed: Int): Unit = {
     val newLen = (buf.length << 1) + needed
     val newBuf = new Array[Byte](newLen)
     System.arraycopy(buf, 0, newBuf, 0, _len)
