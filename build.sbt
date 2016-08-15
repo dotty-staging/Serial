@@ -1,27 +1,20 @@
-name := "Serial"
-
-version      in ThisBuild := "1.0.3-SNAPSHOT"
-
-organization in ThisBuild := "de.sciss"
-
-description  in ThisBuild := "Extension of Scala-STM, adding optional durability layer, and providing API for confluent and reactive event layers"
-
-homepage     in ThisBuild := Some(url("https://github.com/Sciss/" + name.value))
-
-licenses     in ThisBuild := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
-
-scalaVersion in ThisBuild := "2.11.5"
-
-crossScalaVersions in ThisBuild := Seq("2.11.5", "2.10.4")
+name               := "Serial"
+version            := "1.0.3-SNAPSHOT"
+organization       := "de.sciss"
+description        := "Extension of Scala-STM, adding optional durability layer, and providing API for confluent and reactive event layers"
+homepage           := Some(url(s"https://github.com/Sciss/${name.value}"))
+licenses           := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
+scalaVersion       := "2.11.8"
+crossScalaVersions := Seq("2.11.8", "2.10.6")
 
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "2.2.4" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 
-scalacOptions in ThisBuild ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8")
 
-scalacOptions in ThisBuild += "-no-specialization"  // never use this shit. will give you runtime IllegalAccessErrors in random places of the future. do _not_ use specialization. ever. don't diminish your life expectancy.
+scalacOptions += "-no-specialization"  // never use this shit. will give you runtime IllegalAccessErrors in random places of the future. do _not_ use specialization. ever. don't diminish your life expectancy.
 
-scalacOptions in ThisBuild ++= Seq("-Xelide-below", "INFO")     // elide debug logging!
+scalacOptions ++= Seq("-Xelide-below", "INFO")     // elide debug logging!
 
 testOptions in Test += Tests.Argument("-oDF")   // ScalaTest: durations and full stack traces
 
@@ -29,18 +22,20 @@ parallelExecution in Test := false
 
 // ---- test ----
 
-testListeners in ThisBuild += new TestReportListener {
+/*
+testListeners += new TestReportListener {
   def endGroup(name: String, result: TestResult.Value): Unit = println(s"End Group $name (succeeded)")
   def endGroup(name: String, t: Throwable): Unit = println(s"End Group $name (failed)")
   def startGroup(name: String): Unit = println(s"Start Group $name")
   def testEvent(event: TestEvent): Unit = println(s"Test Event: ${event.result}")
 }
+*/
 
 // ---- publishing ----
 
-publishMavenStyle in ThisBuild := true
+publishMavenStyle := true
 
-publishTo in ThisBuild :=
+publishTo :=
   Some(if (isSnapshot.value)
     "Sonatype Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots"
   else
@@ -49,9 +44,9 @@ publishTo in ThisBuild :=
 
 publishArtifact in Test := false
 
-pomIncludeRepository in ThisBuild := { _ => false }
+pomIncludeRepository := { _ => false }
 
-pomExtra in ThisBuild := { val n = name.value
+pomExtra := { val n = name.value
 <scm>
   <url>git@github.com:Sciss/{n}.git</url>
   <connection>scm:git:git@github.com:Sciss/{n}.git</connection>
@@ -64,13 +59,3 @@ pomExtra in ThisBuild := { val n = name.value
   </developer>
 </developers>
 }
-
-// ---- ls.implicit.ly ----
-
-seq(lsSettings :_*)
-
-(LsKeys.tags   in LsKeys.lsync) := Seq("stm", "software-transactional-memory", "persistent")
-
-(LsKeys.ghUser in LsKeys.lsync) := Some("Sciss")
-
-(LsKeys.ghRepo in LsKeys.lsync) := Some(name.value)
