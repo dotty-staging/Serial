@@ -1,18 +1,26 @@
-name               := "Serial"
-version            := "1.0.3-SNAPSHOT"
+lazy val baseName       = "Serial"
+lazy val baseNameL      = baseName.toLowerCase
+
+lazy val projectVersion = "1.0.3"
+lazy val mimaVersion    = "1.0.2"
+
+name               := baseName
+version            := projectVersion
 organization       := "de.sciss"
 description        := "Extension of Scala-STM, adding optional durability layer, and providing API for confluent and reactive event layers"
 homepage           := Some(url(s"https://github.com/Sciss/${name.value}"))
 licenses           := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
 scalaVersion       := "2.11.8"
-crossScalaVersions := Seq("2.11.8", "2.10.6")
+crossScalaVersions := Seq("2.12.1", "2.11.8", "2.10.6")
+
+mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion)
 
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "3.0.0" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
 
-scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8")
+scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8", "-Xlint")
 
-scalacOptions += "-no-specialization"  // never use this shit. will give you runtime IllegalAccessErrors in random places of the future. do _not_ use specialization. ever. don't diminish your life expectancy.
+scalacOptions += "-no-specialization"  // never use specialization. will give you runtime IllegalAccessErrors in random places of the future!
 
 scalacOptions ++= Seq("-Xelide-below", "INFO")     // elide debug logging!
 
