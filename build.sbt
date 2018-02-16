@@ -10,13 +10,13 @@ organization       := "de.sciss"
 description        := "Extension of Scala-STM, adding optional durability layer, and providing API for confluent and reactive event layers"
 homepage           := Some(url(s"https://github.com/Sciss/${name.value}"))
 licenses           := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt"))
-scalaVersion       := "2.11.8"
-crossScalaVersions := Seq("2.12.1", "2.11.8", "2.10.6")
+scalaVersion       := "2.13.0-M3"
+crossScalaVersions := Seq("2.12.4", "2.11.12")
 
 mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion)
 
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5-M1" % "test"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8", "-Xlint")
 
