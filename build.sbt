@@ -16,7 +16,7 @@ crossScalaVersions := Seq("2.12.5", "2.11.12")
 mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion)
 
 libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "3.0.1" % "test"
+  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8", "-Xlint")
 
