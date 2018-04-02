@@ -11,7 +11,7 @@ Serial is (C)opyright 2011&ndash;2018 by Hanns Holger Rutz. All rights reserved.
 
 ## requirements / installation
 
-The project builds with sbt 0.13 against Scala 2.12, 2.11, 2.10.
+The project builds with sbt against Scala 2.12, 2.11.
 
 ## linking
 
