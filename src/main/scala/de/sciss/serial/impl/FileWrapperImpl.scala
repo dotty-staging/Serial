@@ -2,7 +2,7 @@
  *  FileWrapperImpl.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -14,13 +14,13 @@
 package de.sciss.serial
 package impl
 
-import java.io.{InputStream, OutputStream, File, RandomAccessFile}
+import java.io.{File, InputStream, OutputStream, RandomAccessFile}
 
 private[impl] final class FileInputStreamImpl(peer: RandomAccessFile)
   extends InputStream {
 
   def read(): Int = peer.read()
-  override def read(b: Array[Byte], off: Int, len: Int) = peer.read(b, off, len)
+  override def read(b: Array[Byte], off: Int, len: Int): Int = peer.read(b, off, len)
   override def skip(n: Long): Long = {
     val oldPos  = peer.getFilePointer
     val newPos  = math.min(peer.length(), oldPos + n)

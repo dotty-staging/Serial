@@ -2,7 +2,7 @@
  *  Serializer.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -14,11 +14,12 @@
 package de.sciss
 package serial
 
-import annotation.switch
-import collection.immutable.{IndexedSeq => Vec}
-import collection.mutable
+import de.sciss.serial.{SpecGroup => ialized}
+
+import scala.annotation.switch
+import scala.collection.immutable.{IndexedSeq => Vec}
+import scala.collection.mutable
 import scala.{specialized => spec}
-import serial.{SpecGroup => ialized}
 
 object ImmutableSerializer {
 
@@ -211,22 +212,22 @@ object ImmutableSerializer {
 
   private final class ListSerializer[A](val peer: ImmutableSerializer[A])
     extends CollectionSerializer[A, List[A]] {
-    def newBuilder = List.newBuilder[A]
+    def newBuilder: mutable.Builder[A, List[A]] = List.newBuilder[A]
   }
 
   private final class SetSerializer[A](val peer: ImmutableSerializer[A])
     extends CollectionSerializer[A, Set[A]] {
-    def newBuilder = Set.newBuilder[A]
+    def newBuilder: mutable.Builder[A, Set[A]] = Set.newBuilder[A]
   }
 
   private final class IndexedSeqSerializer[A](val peer: ImmutableSerializer[A])
     extends CollectionSerializer[A, Vec[A]] {
-    def newBuilder = Vec.newBuilder[A]
+    def newBuilder: mutable.Builder[A, Vec[A]] = Vec.newBuilder[A]
   }
 
   private final class MapSerializer[A, B](val peer: ImmutableSerializer[(A, B)])
     extends CollectionSerializer[(A, B), Map[A, B]] {
-    def newBuilder = Map.newBuilder[A, B]
+    def newBuilder: mutable.Builder[(A, B), Map[A, B]] = Map.newBuilder[A, B]
   }
 }
 

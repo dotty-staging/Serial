@@ -2,7 +2,7 @@
  *  ByteArrayInputStream.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -14,6 +14,7 @@
 package de.sciss.serial.impl
 
 import java.io.InputStream
+
 import de.sciss.serial.ByteArrayStream
 
 /** A non-synchronized alternative to `java.io.ByteArrayInputStream` */

@@ -2,7 +2,7 @@
  *  ByteArrayOutputStream.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -14,6 +14,7 @@
 package de.sciss.serial.impl
 
 import java.io.OutputStream
+
 import de.sciss.serial.ByteArrayStream
 
 /**
@@ -34,7 +35,7 @@ final class ByteArrayOutputStream(initialSize: Int = 128) extends OutputStream w
     _len = 0
   }
 
-  def position = _pos
+  def position: Int = _pos
   def position_=(value: Int): Unit = {
     if (value < 0 || value > _len) throw new IndexOutOfBoundsException(value.toString)
     _pos = value

@@ -2,7 +2,7 @@
  *  DataOutput.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -13,8 +13,9 @@
 
 package de.sciss.serial
 
-import impl.{FileWrapperImpl, ByteArrayOutputStream}
-import java.io.{OutputStream, DataOutputStream, Closeable, File}
+import java.io.{Closeable, DataOutputStream, File, OutputStream}
+
+import de.sciss.serial.impl.{ByteArrayOutputStream, FileWrapperImpl}
 
 object DataOutput {
   def apply(): DataOutput with ByteArrayStream = {
@@ -29,14 +30,17 @@ object DataOutput {
 
     override def toString = s"DataOutput.ByteArray(size = ${bout.size})@${hashCode().toHexString}"
 
-    @inline def toByteArray = bout.toByteArray
+    @inline def toByteArray: Array[Byte] = bout.toByteArray
+
     @inline def reset(): Unit = {
       bout.reset()
       written = 0
     }
-    @inline def buffer = bout.buffer
 
-    @inline def position = bout.position
+    @inline def buffer: Array[Byte] = bout.buffer
+
+    @inline def position: Int = bout.position
+
     @inline def position_=(value: Int): Unit = {
       bout.position = value
       // ideally, `written` would not exist, and we could just direct `size` to `bout.size`, but unfortunately

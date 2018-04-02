@@ -2,7 +2,7 @@
  *  Serializer.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -14,21 +14,24 @@
 package de.sciss
 package serial
 
-import collection.immutable.{IndexedSeq => IIdxSeq}
-import collection.mutable
-import annotation.switch
+import java.lang.{String => JString}
+
+import de.sciss.serial.{SpecGroup => ialized}
+
+import scala.annotation.switch
+import scala.collection.immutable.{IndexedSeq => IIdxSeq}
+import scala.collection.mutable
 import scala.{specialized => spec}
-import serial.{SpecGroup => ialized}
 
 object Serializer {
-  implicit final val Unit    = ImmutableSerializer.Unit
-  implicit final val Boolean = ImmutableSerializer.Boolean
-  implicit final val Char    = ImmutableSerializer.Char
-  implicit final val Int     = ImmutableSerializer.Int
-  implicit final val Float   = ImmutableSerializer.Float
-  implicit final val Long    = ImmutableSerializer.Long
-  implicit final val Double  = ImmutableSerializer.Double
-  implicit final val String  = ImmutableSerializer.String
+  implicit final val Unit   : ImmutableSerializer[scala.Unit    ] = ImmutableSerializer.Unit
+  implicit final val Boolean: ImmutableSerializer[scala.Boolean ] = ImmutableSerializer.Boolean
+  implicit final val Char   : ImmutableSerializer[scala.Char    ] = ImmutableSerializer.Char
+  implicit final val Int    : ImmutableSerializer[scala.Int     ] = ImmutableSerializer.Int
+  implicit final val Float  : ImmutableSerializer[scala.Float   ] = ImmutableSerializer.Float
+  implicit final val Long   : ImmutableSerializer[scala.Long    ] = ImmutableSerializer.Long
+  implicit final val Double : ImmutableSerializer[scala.Double  ] = ImmutableSerializer.Double
+  implicit final val String : ImmutableSerializer[JString       ] = ImmutableSerializer.String
 
   implicit def immutable[A](implicit peer: ImmutableSerializer[A]): Serializer[Any, Any, A] = peer
 
@@ -155,22 +158,22 @@ object Serializer {
 
   private final class ListSerializer[Tx, Acc, A](val peer: Serializer[Tx, Acc, A])
     extends CollectionSerializer[Tx, Acc, A, List[A]] {
-    def newBuilder = List.newBuilder[A]
+    def newBuilder: mutable.Builder[A, List[A]] = List.newBuilder[A]
   }
 
   private final class SetSerializer[Tx, Acc, A](val peer: Serializer[Tx, Acc, A])
     extends CollectionSerializer[Tx, Acc, A, Set[A]] {
-    def newBuilder = Set.newBuilder[A]
+    def newBuilder: mutable.Builder[A, Set[A]] = Set.newBuilder[A]
   }
 
   private final class IndexedSeqSerializer[Tx, Acc, A](val peer: Serializer[Tx, Acc, A])
     extends CollectionSerializer[Tx, Acc, A, IIdxSeq[A]] {
-    def newBuilder = IIdxSeq.newBuilder[A]
+    def newBuilder: mutable.Builder[A, IIdxSeq[A]] = IIdxSeq.newBuilder[A]
   }
 
   private final class MapSerializer[Tx, Acc, A, B](val peer: Serializer[Tx, Acc, (A, B)])
     extends CollectionSerializer[Tx, Acc, (A, B), Map[A, B]] {
-    def newBuilder = Map.newBuilder[A, B]
+    def newBuilder: mutable.Builder[(A, B), Map[A, B]] = Map.newBuilder[A, B]
   }
 }
 

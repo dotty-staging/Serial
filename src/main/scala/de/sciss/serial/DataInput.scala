@@ -2,7 +2,7 @@
  *  DataInput.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -13,8 +13,9 @@
 
 package de.sciss.serial
 
-import impl.{FileWrapperImpl, ByteArrayInputStream}
-import java.io.{InputStream, DataInputStream, Closeable, File}
+import java.io.{Closeable, DataInputStream, File, InputStream}
+
+import de.sciss.serial.impl.{ByteArrayInputStream, FileWrapperImpl}
 
 object DataInput {
   def apply(buf: Array[Byte]): DataInput with ByteArrayStream = apply(buf, 0, buf.length)
@@ -29,11 +30,14 @@ object DataInput {
 
     override def toString = s"DataInput(pos = $position, available = ${bin.available})@${hashCode().toHexString}"
 
-    @inline def position    = bin.position
-    @inline def position_=(value: Int): Unit = bin.position = value
-    @inline def toByteArray = bin.toByteArray
-    @inline def size        = bin.size
-    @inline def buffer      = bin.buffer
+    @inline def position        : Int         = bin.position
+    @inline def position_=(value: Int): Unit  = bin.position = value
+
+    @inline def toByteArray: Array[Byte] = bin.toByteArray
+
+    @inline def size: Int = bin.size
+
+    @inline def buffer: Array[Byte] = bin.buffer
 
     def asInputStream: InputStream = this
   }

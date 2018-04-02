@@ -2,7 +2,7 @@
  *  ImmutableReader.scala
  *  (Serial)
  *
- * Copyright (c) 2011-2014 Hanns Holger Rutz. All rights reserved.
+ * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
  *
  * This software is published under the GNU Lesser General Public License v2.1+
  *
@@ -14,8 +14,9 @@
 package de.sciss
 package serial
 
+import de.sciss.serial.{SpecGroup => ialized}
+
 import scala.{specialized => spec}
-import serial.{SpecGroup => ialized}
 
 trait ImmutableReader[@spec(ialized) +A] extends Reader[Any, Any, A] {
   def read(in: DataInput): A
