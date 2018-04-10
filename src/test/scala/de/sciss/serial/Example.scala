@@ -1,29 +1,31 @@
 package de.sciss.serial
 
-object Example extends App {
-    case class Person(name: String, age: Int)
+import de.sciss.serial.impl.ImmutableSerializerImpl
 
-    implicit object PersonSerializer extends ImmutableSerializer[Person] {
-      def write(v: Person, out: DataOutput): Unit = {
-        out.writeUTF(v.name)
-        out.writeInt(v.age)
-      }
+trait Example {
+  case class Person(name: String, age: Int)
 
-      def read(in: DataInput): Person = {
-        val name  = in.readUTF()
-        val age   = in.readInt()
-        Person(name, age)
-      }
+  implicit object PersonSerializer extends ImmutableSerializerImpl[Person] {
+    def write(v: Person, out: DataOutput): Unit = {
+      out.writeUTF(v.name)
+      out.writeInt(v.age)
     }
 
-    val p   = Person("Nelson", 94)
-    val out = DataOutput()
-    val ser = implicitly[ImmutableSerializer[Person]]
-    ser.write(p, out)
-    val bin = out.toByteArray
+    def read(in: DataInput): Person = {
+      val name  = in.readUTF()
+      val age   = in.readInt()
+      Person(name, age)
+    }
+  }
 
-    val in  = DataInput(bin)
-    val q   = ser.read(in)
-    println(q)
-    assert(p == q)
+  val p   = Person("Nelson", 94)
+  val out = DataOutput()
+  val ser = implicitly[ImmutableSerializer[Person]]
+  ser.write(p, out)
+  val bin = out.toByteArray
+
+  val in  = DataInput(bin)
+  val q   = ser.read(in)
+  println(q)
+  assert(p == q)
 }

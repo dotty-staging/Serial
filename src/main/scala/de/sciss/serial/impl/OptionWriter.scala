@@ -1,5 +1,5 @@
 /*
- *  RandomAccess.scala
+ *  OptionWriter.scala
  *  (Serial)
  *
  * Copyright (c) 2011-2018 Hanns Holger Rutz. All rights reserved.
@@ -12,8 +12,14 @@
  */
 
 package de.sciss.serial
+package impl
 
-trait RandomAccess {
-  def size    : Int
-  var position: Int
+final class OptionWriter[A](peer: Writer[A])
+  extends Writer[Option[A]] {
+
+  def write(opt: Option[A], out: DataOutput): Unit =
+    opt match {
+      case Some(v)  => out.writeByte(1); peer.write(v, out)
+      case _        => out.writeByte(0)
+    }
 }

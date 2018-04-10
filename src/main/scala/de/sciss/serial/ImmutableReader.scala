@@ -14,12 +14,8 @@
 package de.sciss
 package serial
 
-import de.sciss.serial.{SpecGroup => ialized}
-
-import scala.{specialized => spec}
-
-trait ImmutableReader[@spec(ialized) +A] extends Reader[Any, Any, A] {
+trait ImmutableReader[+A] extends Reader[Any, Any, A] {
   def read(in: DataInput): A
 
-  final def read(in: DataInput, access: Any)(implicit tx: Any): A = read(in)
+  // final def read(in: DataInput, access: Any)(implicit tx: Any): A = read(in)
 }

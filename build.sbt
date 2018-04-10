@@ -1,8 +1,8 @@
 lazy val baseName       = "Serial"
 lazy val baseNameL      = baseName.toLowerCase
 
-lazy val projectVersion = "1.0.4-SNAPSHOT"
-lazy val mimaVersion    = "1.0.2"
+lazy val projectVersion = "1.1.0-SNAPSHOT"
+lazy val mimaVersion    = "1.1.0"
 
 name               := baseName
 version            := projectVersion
@@ -19,8 +19,6 @@ libraryDependencies +=
   "org.scalatest" %% "scalatest" % "3.0.5" % "test"
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8", "-Xlint")
-
-scalacOptions += "-no-specialization"  // never use specialization. will give you runtime IllegalAccessErrors in random places of the future!
 
 scalacOptions ++= Seq("-Xelide-below", "INFO")     // elide debug logging!
 
