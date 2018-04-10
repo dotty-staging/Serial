@@ -14,37 +14,31 @@
 package de.sciss.serial
 package impl
 
-abstract class AbstractMapSerializer[Tx, Acc, A, B]
+final class MapSerializer[Tx, Acc, A, B](key  : Serializer[Tx, Acc, A],
+                                         value: Serializer[Tx, Acc, B])
   extends Serializer[Tx, Acc, Map[A, B]] {
 
-  protected def key   : Serializer[Tx, Acc, A]
-  protected def value : Serializer[Tx, Acc, B]
-
-  final def write(coll: Map[A, B], out: DataOutput): Unit = {
+  def write(coll: Map[A, B], out: DataOutput): Unit = {
     val sz = coll.size
     out.writeInt(coll.size)
     if (sz > 0) {
-      val _key    = key
-      val _value  = value
       coll.foreach { tup =>
-        _key  .write(tup._1, out)
-        _value.write(tup._2, out)
+        key  .write(tup._1, out)
+        value.write(tup._2, out)
       }
     }
   }
 
-  final def read(in: DataInput, acc: Acc)(implicit tx: Tx): Map[A, B] = {
+  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Map[A, B] = {
     val sz = in.readInt()
     if (sz == 0) Map.empty
     else {
       val b = Map.newBuilder[A, B]
       b.sizeHint(sz)
-      val _key    = key
-      val _value  = value
       var rem = sz
       while (rem > 0) {
-        val _1 = _key  .read(in, acc)
-        val _2 = _value.read(in, acc)
+        val _1 = key  .read(in, acc)
+        val _2 = value.read(in, acc)
         b += ((_1, _2))
         rem -= 1
       }
@@ -53,13 +47,35 @@ abstract class AbstractMapSerializer[Tx, Acc, A, B]
   }
 }
 
-final class MapSerializer[Tx, Acc, A, B](protected val key  : Serializer[Tx, Acc, A],
-                                         protected val value: Serializer[Tx, Acc, B])
-  extends AbstractMapSerializer[Tx, Acc, A, B]
+final class ImmutableMapSerializer[A, B](key  : ImmutableSerializer[A],
+                                         value: ImmutableSerializer[B])
+  extends ImmutableSerializer[Map[A, B]] {
 
-final class ImmutableMapSerializer[A, B](protected val key  : Serializer.Immutable[A],
-                                         protected val value: Serializer.Immutable[B])
-  extends AbstractMapSerializer[Any, Any, A, B] with ImmutableSerializer[Map[A, B]] {
+  def write(coll: Map[A, B], out: DataOutput): Unit = {
+    val sz = coll.size
+    out.writeInt(coll.size)
+    if (sz > 0) {
+      coll.foreach { tup =>
+        key  .write(tup._1, out)
+        value.write(tup._2, out)
+      }
+    }
+  }
 
-  def read(in: DataInput): Map[A, B] = read(in, ())(())
+  def read(in: DataInput): Map[A, B] = {
+    val sz = in.readInt()
+    if (sz == 0) Map.empty
+    else {
+      val b = Map.newBuilder[A, B]
+      b.sizeHint(sz)
+      var rem = sz
+      while (rem > 0) {
+        val _1 = key  .read(in)
+        val _2 = value.read(in)
+        b += ((_1, _2))
+        rem -= 1
+      }
+      b.result()
+    }
+  }
 }

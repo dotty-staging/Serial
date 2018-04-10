@@ -21,7 +21,7 @@ abstract class CollectionSerializer[Tx, Acc, A, That <: Traversable[A]] extends 
   def newBuilder: mutable.Builder[A, That]
   def empty     : That
 
-  def peer: Serializer[Tx, Acc, A]
+  def peer      : Serializer[Tx, Acc, A]
 
   final def write(coll: That, out: DataOutput): Unit = {
     out.writeInt(coll.size)
@@ -47,9 +47,34 @@ abstract class CollectionSerializer[Tx, Acc, A, That <: Traversable[A]] extends 
 }
 
 abstract class ImmutableCollectionSerializer[A, That <: Traversable[A]]
-  extends CollectionSerializer[Any, Any, A, That] with ImmutableSerializer[That] {
+  extends ImmutableSerializer[That] {
 
-  final override def read(in: DataInput): That = read(in, ())(())
+  def newBuilder: mutable.Builder[A, That]
+  def empty     : That
+
+  def peer      : ImmutableSerializer[A]
+
+  final def write(coll: That, out: DataOutput): Unit = {
+    out.writeInt(coll.size)
+    val ser = peer
+    coll.foreach(ser.write(_, out))
+  }
+
+  final override def read(in: DataInput): That = {
+    val sz = in.readInt()
+    if (sz == 0) empty
+    else {
+      val b = newBuilder
+      b.sizeHint(sz)
+      val ser = peer
+      var rem = sz
+      while (rem > 0) {
+        b += ser.read(in)
+        rem -= 1
+      }
+      b.result()
+    }
+  }
 }
 
 final class ListSerializer[Tx, Acc, A](val peer: Serializer[Tx, Acc, A])
@@ -70,19 +95,19 @@ final class IndexedSeqSerializer[Tx, Acc, A](val peer: Serializer[Tx, Acc, A])
   def empty: Vec[A] = Vector.empty
 }
 
-final class ImmutableListSerializer[A](val peer: Serializer.Immutable[A])
+final class ImmutableListSerializer[A](val peer: ImmutableSerializer[A])
   extends ImmutableCollectionSerializer[A, List[A]] {
   def newBuilder: mutable.Builder[A, List[A]] = List.newBuilder[A]
   def empty: List[A] = Nil
 }
 
-final class ImmutableSetSerializer[A](val peer: Serializer.Immutable[A])
+final class ImmutableSetSerializer[A](val peer: ImmutableSerializer[A])
   extends ImmutableCollectionSerializer[A, Set[A]] {
   def newBuilder: mutable.Builder[A, Set[A]] = Set.newBuilder[A]
   def empty: Set[A] = Set.empty
 }
 
-final class ImmutableIndexedSeqSerializer[A](val peer: Serializer.Immutable[A])
+final class ImmutableIndexedSeqSerializer[A](val peer: ImmutableSerializer[A])
   extends ImmutableCollectionSerializer[A, Vec[A]] {
   def newBuilder: mutable.Builder[A, Vec[A]] = Vec.newBuilder[A]
   def empty: Vec[A] = Vector.empty

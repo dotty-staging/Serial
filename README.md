@@ -31,7 +31,7 @@ import de.sciss.serial._
 
 case class Person(name: String, age: Int)
 
-implicit object PersonSerializer extends impl.ImmutableSerializerImpl[Person] {
+implicit object PersonSerializer extends ImmutableSerializer[Person] {
   def write(v: Person, out: DataOutput) {
     out.writeUTF(v.name)
     out.writeInt(v.age)

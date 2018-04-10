@@ -16,31 +16,34 @@ package impl
 
 import scala.annotation.switch
 
-abstract class AbstractEitherSerializer[Tx, Acc, A, B]
+final class EitherSerializer[Tx, Acc, A, B](peer1: Serializer[Tx, Acc, A],
+                                            peer2: Serializer[Tx, Acc, B])
   extends Serializer[Tx, Acc, Either[A, B]] {
 
-  protected def peer1: Serializer[Tx, Acc, A]
-  protected def peer2: Serializer[Tx, Acc, B]
-
-  final def write(either: Either[A, B], out: DataOutput): Unit =
+  def write(either: Either[A, B], out: DataOutput): Unit =
     either match {
       case Left (a) => out.writeByte(0); peer1.write(a, out)
       case Right(b) => out.writeByte(1); peer2.write(b, out)
     }
 
-  final def read(in: DataInput, acc: Acc)(implicit tx: Tx): Either[A, B] = (in.readByte(): @switch) match {
+  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Either[A, B] = (in.readByte(): @switch) match {
     case 0 => Left (peer1.read(in, acc))
     case 1 => Right(peer2.read(in, acc))
   }
 }
 
-final class EitherSerializer[Tx, Acc, A, B](protected val peer1: Serializer[Tx, Acc, A],
-                                            protected val peer2: Serializer[Tx, Acc, B])
-  extends AbstractEitherSerializer[Tx, Acc, A, B]
+final class ImmutableEitherSerializer[A, B](peer1: ImmutableSerializer[A],
+                                            peer2: ImmutableSerializer[B])
+  extends ImmutableSerializer[Either[A, B]] {
 
-final class ImmutableEitherSerializer[A, B](protected val peer1: Serializer.Immutable[A],
-                                            protected val peer2: Serializer.Immutable[B])
-  extends AbstractEitherSerializer[Any, Any, A, B] with ImmutableSerializer[Either[A, B]] {
+   def write(either: Either[A, B], out: DataOutput): Unit =
+    either match {
+      case Left (a) => out.writeByte(0); peer1.write(a, out)
+      case Right(b) => out.writeByte(1); peer2.write(b, out)
+    }
 
-  def read(in: DataInput): Either[A, B] = read(in, ())(())
+  def read(in: DataInput): Either[A, B] = (in.readByte(): @switch) match {
+    case 0 => Left (peer1.read(in))
+    case 1 => Right(peer2.read(in))
+  }
 }

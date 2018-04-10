@@ -14,20 +14,18 @@
 package de.sciss.serial
 package impl
 
-abstract class AbstractTuple3Serializer[Tx, Acc, A1, A2, A3]
+final class Tuple3Serializer[Tx, Acc, A1, A2, A3](peer1: Serializer[Tx, Acc, A1],
+                                                  peer2: Serializer[Tx, Acc, A2],
+                                                  peer3: Serializer[Tx, Acc, A3])
   extends Serializer[Tx, Acc, (A1, A2, A3)] {
 
-  protected val peer1: Serializer[Tx, Acc, A1]
-  protected val peer2: Serializer[Tx, Acc, A2]
-  protected val peer3: Serializer[Tx, Acc, A3]
-
-  final def write(tup: (A1, A2, A3), out: DataOutput): Unit = {
+  def write(tup: (A1, A2, A3), out: DataOutput): Unit = {
     peer1.write(tup._1, out)
     peer2.write(tup._2, out)
     peer3.write(tup._3, out)
   }
 
-  final def read(in: DataInput, acc: Acc)(implicit tx: Tx): (A1, A2, A3) = {
+  def read(in: DataInput, acc: Acc)(implicit tx: Tx): (A1, A2, A3) = {
     val a1 = peer1.read(in, acc)
     val a2 = peer2.read(in, acc)
     val a3 = peer3.read(in, acc)
@@ -35,15 +33,21 @@ abstract class AbstractTuple3Serializer[Tx, Acc, A1, A2, A3]
   }
 }
 
-final class Tuple3Serializer[Tx, Acc, A1, A2, A3](protected val peer1: Serializer[Tx, Acc, A1],
-                                                  protected val peer2: Serializer[Tx, Acc, A2],
-                                                  protected val peer3: Serializer[Tx, Acc, A3])
-  extends AbstractTuple3Serializer[Tx, Acc, A1, A2, A3]
+final class ImmutableTuple3Serializer[A1, A2, A3](peer1: ImmutableSerializer[A1],
+                                                  peer2: ImmutableSerializer[A2],
+                                                  peer3: ImmutableSerializer[A3])
+  extends ImmutableSerializer[(A1, A2, A3)] {
 
-final class ImmutableTuple3Serializer[A1, A2, A3](protected val peer1: Serializer.Immutable[A1],
-                                                  protected val peer2: Serializer.Immutable[A2],
-                                                  protected val peer3: Serializer.Immutable[A3])
-  extends AbstractTuple3Serializer[Any, Any, A1, A2, A3] with ImmutableSerializer[(A1, A2, A3)] {
+  def write(tup: (A1, A2, A3), out: DataOutput): Unit = {
+    peer1.write(tup._1, out)
+    peer2.write(tup._2, out)
+    peer3.write(tup._3, out)
+  }
 
-  def read(in: DataInput): (A1, A2, A3) = read(in, ())(())
+  def read(in: DataInput): (A1, A2, A3) = {
+    val a1 = peer1.read(in)
+    val a2 = peer2.read(in)
+    val a3 = peer3.read(in)
+    (a1, a2, a3)
+  }
 }

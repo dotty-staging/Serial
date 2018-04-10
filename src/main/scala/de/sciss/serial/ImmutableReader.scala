@@ -17,5 +17,5 @@ package serial
 trait ImmutableReader[+A] extends Reader[Any, Any, A] {
   def read(in: DataInput): A
 
-  // final def read(in: DataInput, access: Any)(implicit tx: Any): A = read(in)
+  def read(in: DataInput, access: Any)(implicit tx: Any): A = read(in)
 }

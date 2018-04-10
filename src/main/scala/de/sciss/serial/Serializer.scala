@@ -26,64 +26,55 @@ object Serializer {
   implicit final object Unit extends ImmutableSerializer[scala.Unit] {
     def write(v: scala.Unit, out: DataOutput): Unit = ()
 
-    def read(in: DataInput)                               : Unit = ()
-    def read(in: DataInput, access: Any)(implicit tx: Any): Unit = ()
+    def read(in: DataInput): Unit = ()
   }
 
   implicit final object Boolean extends ImmutableSerializer[scala.Boolean] {
     def write(v: scala.Boolean, out: DataOutput): Unit = out.writeBoolean(v)
 
-    def read(in: DataInput)                               : scala.Boolean = in.readBoolean()
-    def read(in: DataInput, access: Any)(implicit tx: Any): scala.Boolean = in.readBoolean()
+    def read(in: DataInput): scala.Boolean = in.readBoolean()
   }
 
   implicit final object Char extends ImmutableSerializer[scala.Char] {
     def write(v: scala.Char, out: DataOutput): Unit = out.writeChar(v)
 
-    def read(in: DataInput)                               : scala.Char = in.readChar()
-    def read(in: DataInput, access: Any)(implicit tx: Any): scala.Char = in.readChar()
+    def read(in: DataInput): scala.Char = in.readChar()
   }
 
   implicit final object Int extends ImmutableSerializer[scala.Int] {
     def write(v: scala.Int, out: DataOutput): Unit = out.writeInt(v)
 
-    def read(in: DataInput)                               : scala.Int = in.readInt()
-    def read(in: DataInput, access: Any)(implicit tx: Any): scala.Int = in.readInt()
+    def read(in: DataInput): scala.Int = in.readInt()
   }
 
   implicit final object Float extends ImmutableSerializer[scala.Float] {
     def write(v: scala.Float, out: DataOutput): Unit = out.writeFloat(v)
 
-    def read(in: DataInput)                               : scala.Float = in.readFloat()
-    def read(in: DataInput, access: Any)(implicit tx: Any): scala.Float = in.readFloat()
+    def read(in: DataInput): scala.Float = in.readFloat()
   }
 
   implicit final object Long extends ImmutableSerializer[scala.Long] {
     def write(v: scala.Long, out: DataOutput): Unit = out.writeLong(v)
 
-    def read(in: DataInput)                               : scala.Long = in.readLong()
-    def read(in: DataInput, access: Any)(implicit tx: Any): scala.Long = in.readLong()
+    def read(in: DataInput): scala.Long = in.readLong()
   }
 
   implicit final object Double extends ImmutableSerializer[scala.Double] {
     def write(v: scala.Double, out: DataOutput): Unit = out.writeDouble(v)
 
-    def read(in: DataInput)                               : scala.Double = in.readDouble()
-    def read(in: DataInput, access: Any)(implicit tx: Any): scala.Double = in.readDouble()
+    def read(in: DataInput): scala.Double = in.readDouble()
   }
 
   implicit final object String extends ImmutableSerializer[java.lang.String] {
     def write(v: java.lang.String, out: DataOutput): Unit = out.writeUTF(v)
 
-    def read(in: DataInput)                               : java.lang.String = in.readUTF()
-    def read(in: DataInput, access: Any)(implicit tx: Any): java.lang.String = in.readUTF()
+    def read(in: DataInput): java.lang.String = in.readUTF()
   }
 
   implicit final object File extends ImmutableSerializer[java.io.File] {
     def write(v: java.io.File, out: DataOutput): Unit = out.writeUTF(v.getPath)
 
-    def read(in: DataInput)                               : java.io.File = new java.io.File(in.readUTF())
-    def read(in: DataInput, access: Any)(implicit tx: Any): java.io.File = new java.io.File(in.readUTF())
+    def read(in: DataInput): java.io.File = new java.io.File(in.readUTF())
   }
 
   // ---- higher-kinded ----

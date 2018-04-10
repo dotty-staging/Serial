@@ -16,28 +16,32 @@ package impl
 
 import scala.annotation.switch
 
-abstract class AbstractOptionSerializer[Tx, Acc, A]
+final class OptionSerializer[Tx, Acc, A](peer: Serializer[Tx, Acc, A])
   extends Serializer[Tx, Acc, Option[A]] {
 
-  protected def peer: Serializer[Tx, Acc, A]
-
-  final def write(opt: Option[A], out: DataOutput): Unit =
+  def write(opt: Option[A], out: DataOutput): Unit =
     opt match {
       case Some(v)  => out.writeByte(1); peer.write(v, out)
       case _        => out.writeByte(0)
     }
 
-  final def read(in: DataInput, acc: Acc)(implicit tx: Tx): Option[A] = (in.readByte(): @switch) match {
+  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Option[A] = (in.readByte(): @switch) match {
     case 1 => Some(peer.read(in, acc))
     case 0 => None
   }
 }
 
-final class OptionSerializer[Tx, Acc, A](protected val peer: Serializer[Tx, Acc, A])
-  extends AbstractOptionSerializer[Tx, Acc, A]
+final class ImmutableOptionSerializer[A](peer: ImmutableSerializer[A])
+  extends ImmutableSerializer[Option[A]] {
 
-final class ImmutableOptionSerializer[A](protected val peer: Serializer.Immutable[A])
-  extends AbstractOptionSerializer[Any, Any, A] with ImmutableSerializer[Option[A]] {
+  def write(opt: Option[A], out: DataOutput): Unit =
+    opt match {
+      case Some(v)  => out.writeByte(1); peer.write(v, out)
+      case _        => out.writeByte(0)
+    }
 
-  def read(in: DataInput): Option[A] = read(in, ())(())
+  def read(in: DataInput): Option[A] = (in.readByte(): @switch) match {
+    case 1 => Some(peer.read(in))
+    case 0 => None
+  }
 }
