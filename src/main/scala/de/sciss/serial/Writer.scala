@@ -55,7 +55,7 @@ trait WriterLoPri {
     new MapWriter[A, B](key, value)
 }
 
-object Writer {
+object Writer extends WriterLoPri {
   implicit def serializer[Tx, Acc, A](implicit peer: Serializer[Tx, Acc, A]): Writer[A] = peer
 }
 trait Writer[-A] {

@@ -22,7 +22,7 @@ The following dependency is necessary:
 
     "de.sciss" %% "serial" % v
 
-The current version `v` is `"1.1.0`".
+The current version `v` is `"1.1.1`".
 
 ## example
 
