@@ -15,8 +15,10 @@ crossScalaVersions := Seq("2.12.5", "2.11.12")
 
 mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion)
 
-libraryDependencies +=
-  "org.scalatest" %% "scalatest" % "3.0.5" % "test"
+libraryDependencies += {
+  val v = if (scalaVersion.value == "2.13.0-M5") "3.0.6-SNAP5" else "3.0.5"
+  "org.scalatest" %% "scalatest" % v % Test
+}
 
 scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-Xfuture", "-encoding", "utf8", "-Xlint")
 
