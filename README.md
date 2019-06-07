@@ -8,13 +8,13 @@
 Serial provides a simple serialization layer for the Scala programming language. It is based on readers and writers 
 of byte array or file backed up data streams.
 
-Serial is (C)opyright 2011&ndash;2018 by Hanns Holger Rutz. All rights reserved. It is released under 
+Serial is (C)opyright 2011&ndash;2019 by Hanns Holger Rutz. All rights reserved. It is released under 
 the [GNU Lesser General Public License](https://raw.github.com/Sciss/Serial/master/LICENSE) and comes with 
 absolutely no warranties. To contact the author, send an email to `contact at sciss.de`
 
 ## requirements / installation
 
-The project builds with sbt against Scala 2.12, 2.11.
+The project builds with sbt against Scala 2.13, 2.12, 2.11.
 
 ## linking
 
