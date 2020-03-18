@@ -1,20 +1,20 @@
 # Serial
 
 [![Build Status](https://travis-ci.org/Sciss/Serial.svg?branch=master)](https://travis-ci.org/Sciss/Serial)
-[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.sciss/serial_2.11/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.sciss/serial_2.11)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.sciss/serial_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.sciss/serial_2.13)
 
 ## statement
 
 Serial provides a simple serialization layer for the Scala programming language. It is based on readers and writers 
 of byte array or file backed up data streams.
 
-Serial is (C)opyright 2011&ndash;2019 by Hanns Holger Rutz. All rights reserved. It is released under 
+Serial is (C)opyright 2011&ndash;2020 by Hanns Holger Rutz. All rights reserved. It is released under 
 the [GNU Lesser General Public License](https://raw.github.com/Sciss/Serial/master/LICENSE) and comes with 
 absolutely no warranties. To contact the author, send an email to `contact at sciss.de`
 
 ## requirements / installation
 
-The project builds with sbt against Scala 2.13, 2.12, 2.11.
+The project builds with sbt against Scala 2.13, 2.12. The last version to support Scala 2.11 was v1.1.1.
 
 ## linking
 
@@ -22,7 +22,7 @@ The following dependency is necessary:
 
     "de.sciss" %% "serial" % v
 
-The current version `v` is `"1.1.1`".
+The current version `v` is `"1.1.2`".
 
 ## example
 

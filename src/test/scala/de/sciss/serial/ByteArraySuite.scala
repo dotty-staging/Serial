@@ -1,8 +1,8 @@
 package de.sciss.serial
 
-import org.scalatest.FunSuite
+import org.scalatest.funsuite.AnyFunSuite
 
-class ByteArraySuite extends FunSuite {
+class ByteArraySuite extends AnyFunSuite {
   test("byte array (de)serialization is run on various primitives") {
     val dout = DataOutput()
     dout.writeByte(1)

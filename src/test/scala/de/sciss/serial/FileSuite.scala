@@ -1,9 +1,10 @@
 package de.sciss.serial
 
-import org.scalatest.FunSuite
 import java.io.File
 
-class FileSuite extends FunSuite {
+import org.scalatest.funsuite.AnyFunSuite
+
+class FileSuite extends AnyFunSuite {
   test("file based (de)serialization is run on various primitives") {
     val f = File.createTempFile("serial", ".test")
     val dout = DataOutput.open(f)
