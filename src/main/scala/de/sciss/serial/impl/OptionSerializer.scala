@@ -14,8 +14,6 @@
 package de.sciss.serial
 package impl
 
-import scala.annotation.switch
-
 final class OptionSerializer[Tx, Acc, A](peer: Serializer[Tx, Acc, A])
   extends Serializer[Tx, Acc, Option[A]] {
 
@@ -25,10 +23,11 @@ final class OptionSerializer[Tx, Acc, A](peer: Serializer[Tx, Acc, A])
       case _        => out.writeByte(0)
     }
 
-  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Option[A] = (in.readByte(): @switch) match {
-    case 1 => Some(peer.read(in, acc))
-    case 0 => None
-  }
+  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Option[A] =
+    in.readByte() match {
+      case 1 => Some(peer.read(in, acc))
+      case 0 => None
+    }
 }
 
 final class ImmutableOptionSerializer[A](peer: ImmutableSerializer[A])
@@ -40,8 +39,9 @@ final class ImmutableOptionSerializer[A](peer: ImmutableSerializer[A])
       case _        => out.writeByte(0)
     }
 
-  def read(in: DataInput): Option[A] = (in.readByte(): @switch) match {
-    case 1 => Some(peer.read(in))
-    case 0 => None
-  }
+  def read(in: DataInput): Option[A] =
+    in.readByte() match {
+      case 1 => Some(peer.read(in))
+      case 0 => None
+    }
 }

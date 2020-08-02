@@ -1,6 +1,6 @@
 # Serial
 
-[![Build Status](https://travis-ci.org/Sciss/Serial.svg?branch=master)](https://travis-ci.org/Sciss/Serial)
+[![Build Status](https://travis-ci.org/Sciss/Serial.svg?branch=main)](https://travis-ci.org/Sciss/Serial)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/de.sciss/serial_2.13/badge.svg)](https://maven-badges.herokuapp.com/maven-central/de.sciss/serial_2.13)
 
 ## statement
@@ -9,8 +9,8 @@ Serial provides a simple serialization layer for the Scala programming language.
 of byte array or file backed up data streams.
 
 Serial is (C)opyright 2011&ndash;2020 by Hanns Holger Rutz. All rights reserved. It is released under 
-the [GNU Lesser General Public License](https://raw.github.com/Sciss/Serial/master/LICENSE) and comes with 
-absolutely no warranties. To contact the author, send an email to `contact at sciss.de`
+the [GNU Lesser General Public License](https://raw.github.com/Sciss/Serial/main/LICENSE) and comes with 
+absolutely no warranties. To contact the author, send an e-mail to `contact at sciss.de`
 
 ## requirements / installation
 
@@ -22,7 +22,7 @@ The following dependency is necessary:
 
     "de.sciss" %% "serial" % v
 
-The current version `v` is `"1.1.2`".
+The current version `v` is `"1.1.3`".
 
 ## example
 
@@ -32,7 +32,7 @@ import de.sciss.serial._
 case class Person(name: String, age: Int)
 
 implicit object PersonSerializer extends ImmutableSerializer[Person] {
-  def write(v: Person, out: DataOutput) {
+  def write(v: Person, out: DataOutput): Unit = {
     out.writeUTF(v.name)
     out.writeInt(v.age)
   }

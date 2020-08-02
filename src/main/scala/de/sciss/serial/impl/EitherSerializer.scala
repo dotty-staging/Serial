@@ -14,8 +14,6 @@
 package de.sciss.serial
 package impl
 
-import scala.annotation.switch
-
 final class EitherSerializer[Tx, Acc, A, B](peer1: Serializer[Tx, Acc, A],
                                             peer2: Serializer[Tx, Acc, B])
   extends Serializer[Tx, Acc, Either[A, B]] {
@@ -26,10 +24,11 @@ final class EitherSerializer[Tx, Acc, A, B](peer1: Serializer[Tx, Acc, A],
       case Right(b) => out.writeByte(1); peer2.write(b, out)
     }
 
-  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Either[A, B] = (in.readByte(): @switch) match {
-    case 0 => Left (peer1.read(in, acc))
-    case 1 => Right(peer2.read(in, acc))
-  }
+  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Either[A, B] =
+    in.readByte() match {
+      case 0 => Left (peer1.read(in, acc))
+      case 1 => Right(peer2.read(in, acc))
+    }
 }
 
 final class ImmutableEitherSerializer[A, B](peer1: ImmutableSerializer[A],
@@ -42,8 +41,9 @@ final class ImmutableEitherSerializer[A, B](peer1: ImmutableSerializer[A],
       case Right(b) => out.writeByte(1); peer2.write(b, out)
     }
 
-  def read(in: DataInput): Either[A, B] = (in.readByte(): @switch) match {
-    case 0 => Left (peer1.read(in))
-    case 1 => Right(peer2.read(in))
-  }
+  def read(in: DataInput): Either[A, B] =
+    in.readByte() match {
+      case 0 => Left (peer1.read(in))
+      case 1 => Right(peer2.read(in))
+    }
 }
