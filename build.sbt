@@ -12,10 +12,10 @@ lazy val commonSettings = Seq(
   homepage           := Some(url(s"https://git.iem.at/sciss/${name.value}")),
   licenses           := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt")),
   scalaVersion       := "2.13.3",
-  crossScalaVersions := Seq("0.24.0-RC1", "2.13.3", "2.12.12"),
+  crossScalaVersions := Seq("0.26.0-RC1", "2.13.3", "2.12.12"),
   mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion),
   libraryDependencies += {
-    "org.scalatest" %% "scalatest" % "3.2.0" % Test
+    "org.scalatest" %% "scalatest" % "3.2.1" % Test
   },
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-encoding", "utf8", "-Xlint", "-Xsource:2.13"),
   scalacOptions in (Compile, compile) ++= {
