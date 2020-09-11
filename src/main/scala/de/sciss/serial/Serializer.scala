@@ -36,7 +36,7 @@ object Serializer {
   }
 
   implicit final object Char extends ImmutableSerializer[scala.Char] {
-    def write(v: scala.Char, out: DataOutput): Unit = out.writeChar(v)
+    def write(v: scala.Char, out: DataOutput): Unit = out.writeChar(v.toInt)
 
     def read(in: DataInput): scala.Char = in.readChar()
   }

@@ -35,7 +35,7 @@ final class ImmutableEitherSerializer[A, B](peer1: ImmutableSerializer[A],
                                             peer2: ImmutableSerializer[B])
   extends ImmutableSerializer[Either[A, B]] {
 
-   def write(either: Either[A, B], out: DataOutput): Unit =
+  def write(either: Either[A, B], out: DataOutput): Unit =
     either match {
       case Left (a) => out.writeByte(0); peer1.write(a, out)
       case Right(b) => out.writeByte(1); peer2.write(b, out)
