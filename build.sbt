@@ -1,8 +1,8 @@
 lazy val baseName       = "Serial"
 lazy val baseNameL      = baseName.toLowerCase
 
-lazy val projectVersion = "1.1.3"
-lazy val mimaVersion    = "1.1.0"
+lazy val projectVersion = "2.0.0-SNAPSHOT"
+lazy val mimaVersion    = "2.0.0"
 
 lazy val commonSettings = Seq(
   name               := baseName,

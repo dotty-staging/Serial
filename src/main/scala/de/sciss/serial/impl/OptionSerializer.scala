@@ -14,8 +14,8 @@
 package de.sciss.serial
 package impl
 
-final class OptionSerializer[Tx, Acc, A](peer: Serializer[Tx, Acc, A])
-  extends Serializer[Tx, Acc, Option[A]] {
+final class OptionTFormat[-T, A](peer: TFormat[T, A])
+  extends TFormat[T, Option[A]] {
 
   def write(opt: Option[A], out: DataOutput): Unit =
     opt match {
@@ -23,15 +23,15 @@ final class OptionSerializer[Tx, Acc, A](peer: Serializer[Tx, Acc, A])
       case _        => out.writeByte(0)
     }
 
-  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Option[A] =
+  def readT(in: DataInput)(implicit tx: T): Option[A] =
     in.readByte() match {
-      case 1 => Some(peer.read(in, acc))
+      case 1 => Some(peer.readT(in))
       case 0 => None
     }
 }
 
-final class ImmutableOptionSerializer[A](peer: ImmutableSerializer[A])
-  extends ImmutableSerializer[Option[A]] {
+final class ConstOptionFormat[A](peer: ConstFormat[A])
+  extends ConstFormat[Option[A]] {
 
   def write(opt: Option[A], out: DataOutput): Unit =
     opt match {

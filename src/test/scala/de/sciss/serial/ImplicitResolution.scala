@@ -4,9 +4,9 @@ import scala.collection.immutable.{IndexedSeq => Vec}
 
 trait ImplicitResolution {
   // issue #2
-  implicitly[de.sciss.serial.Serializer[Any, Any, Vec[Int]]]
+  implicitly[TFormat[Any, Vec[Int]]]
 
-  implicitly[Serializer.Immutable[Vec[Int]]]
+  implicitly[TFormat.Constant[Vec[Int]]]
 
   trait Foo extends Writable
 
@@ -17,7 +17,7 @@ trait ImplicitResolution {
   }
 
   object Bar {
-    implicit def serializer: ImmutableSerializer[Bar] = ???
+    implicit def serializer: ConstFormat[Bar] = ???
   }
   trait Bar extends Writable
   implicitly[Writer[Bar]]

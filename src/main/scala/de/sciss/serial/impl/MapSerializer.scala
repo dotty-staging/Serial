@@ -14,11 +14,13 @@
 package de.sciss.serial
 package impl
 
-final class MapSerializer[Tx, Acc, A, B](key  : Serializer[Tx, Acc, A],
-                                         value: Serializer[Tx, Acc, B])
-  extends Serializer[Tx, Acc, Map[A, B]] {
+import scala.collection.immutable.{Map => IMap}
 
-  def write(coll: Map[A, B], out: DataOutput): Unit = {
+final class MapTFormat[-T, A, B](key  : TFormat[T, A],
+                                 value: TFormat[T, B])
+  extends TFormat[T, IMap[A, B]] {
+
+  def write(coll: IMap[A, B], out: DataOutput): Unit = {
     val sz = coll.size
     out.writeInt(coll.size)
     if (sz > 0) {
@@ -29,16 +31,16 @@ final class MapSerializer[Tx, Acc, A, B](key  : Serializer[Tx, Acc, A],
     }
   }
 
-  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Map[A, B] = {
+  def readT(in: DataInput)(implicit tx: T): IMap[A, B] = {
     val sz = in.readInt()
-    if (sz == 0) Map.empty
+    if (sz == 0) IMap.empty
     else {
-      val b = Map.newBuilder[A, B]
+      val b = IMap.newBuilder[A, B]
       b.sizeHint(sz)
       var rem = sz
       while (rem > 0) {
-        val _1 = key  .read(in, acc)
-        val _2 = value.read(in, acc)
+        val _1 = key  .readT(in)
+        val _2 = value.readT(in)
         b += ((_1, _2))
         rem -= 1
       }
@@ -47,11 +49,11 @@ final class MapSerializer[Tx, Acc, A, B](key  : Serializer[Tx, Acc, A],
   }
 }
 
-final class ImmutableMapSerializer[A, B](key  : ImmutableSerializer[A],
-                                         value: ImmutableSerializer[B])
-  extends ImmutableSerializer[Map[A, B]] {
+final class ConstMapFormat[A, B](key  : ConstFormat[A],
+                                 value: ConstFormat[B])
+  extends ConstFormat[IMap[A, B]] {
 
-  def write(coll: Map[A, B], out: DataOutput): Unit = {
+  def write(coll: IMap[A, B], out: DataOutput): Unit = {
     val sz = coll.size
     out.writeInt(coll.size)
     if (sz > 0) {
@@ -62,11 +64,11 @@ final class ImmutableMapSerializer[A, B](key  : ImmutableSerializer[A],
     }
   }
 
-  def read(in: DataInput): Map[A, B] = {
+  def read(in: DataInput): IMap[A, B] = {
     val sz = in.readInt()
-    if (sz == 0) Map.empty
+    if (sz == 0) IMap.empty
     else {
-      val b = Map.newBuilder[A, B]
+      val b = IMap.newBuilder[A, B]
       b.sizeHint(sz)
       var rem = sz
       while (rem > 0) {

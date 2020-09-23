@@ -14,10 +14,10 @@
 package de.sciss.serial
 package impl
 
-final class Tuple3Serializer[Tx, Acc, A1, A2, A3](peer1: Serializer[Tx, Acc, A1],
-                                                  peer2: Serializer[Tx, Acc, A2],
-                                                  peer3: Serializer[Tx, Acc, A3])
-  extends Serializer[Tx, Acc, (A1, A2, A3)] {
+final class Tuple3TFormat[T, A1, A2, A3](peer1: TFormat[T, A1],
+                                         peer2: TFormat[T, A2],
+                                         peer3: TFormat[T, A3])
+  extends TFormat[T, (A1, A2, A3)] {
 
   def write(tup: (A1, A2, A3), out: DataOutput): Unit = {
     peer1.write(tup._1, out)
@@ -25,18 +25,18 @@ final class Tuple3Serializer[Tx, Acc, A1, A2, A3](peer1: Serializer[Tx, Acc, A1]
     peer3.write(tup._3, out)
   }
 
-  def read(in: DataInput, acc: Acc)(implicit tx: Tx): (A1, A2, A3) = {
-    val a1 = peer1.read(in, acc)
-    val a2 = peer2.read(in, acc)
-    val a3 = peer3.read(in, acc)
+  def readT(in: DataInput)(implicit tx: T): (A1, A2, A3) = {
+    val a1 = peer1.readT(in)
+    val a2 = peer2.readT(in)
+    val a3 = peer3.readT(in)
     (a1, a2, a3)
   }
 }
 
-final class ImmutableTuple3Serializer[A1, A2, A3](peer1: ImmutableSerializer[A1],
-                                                  peer2: ImmutableSerializer[A2],
-                                                  peer3: ImmutableSerializer[A3])
-  extends ImmutableSerializer[(A1, A2, A3)] {
+final class ConstTuple3Format[A1, A2, A3](peer1: ConstFormat[A1],
+                                          peer2: ConstFormat[A2],
+                                          peer3: ConstFormat[A3])
+  extends ConstFormat[(A1, A2, A3)] {
 
   def write(tup: (A1, A2, A3), out: DataOutput): Unit = {
     peer1.write(tup._1, out)

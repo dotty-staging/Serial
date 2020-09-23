@@ -14,9 +14,9 @@
 package de.sciss.serial
 package impl
 
-final class EitherSerializer[Tx, Acc, A, B](peer1: Serializer[Tx, Acc, A],
-                                            peer2: Serializer[Tx, Acc, B])
-  extends Serializer[Tx, Acc, Either[A, B]] {
+final class EitherTFormat[-T, A, B](peer1: TFormat[T, A],
+                                    peer2: TFormat[T, B])
+  extends TFormat[T, Either[A, B]] {
 
   def write(either: Either[A, B], out: DataOutput): Unit =
     either match {
@@ -24,16 +24,16 @@ final class EitherSerializer[Tx, Acc, A, B](peer1: Serializer[Tx, Acc, A],
       case Right(b) => out.writeByte(1); peer2.write(b, out)
     }
 
-  def read(in: DataInput, acc: Acc)(implicit tx: Tx): Either[A, B] =
+  def readT(in: DataInput)(implicit tx: T): Either[A, B] =
     in.readByte() match {
-      case 0 => Left (peer1.read(in, acc))
-      case 1 => Right(peer2.read(in, acc))
+      case 0 => Left (peer1.readT(in))
+      case 1 => Right(peer2.readT(in))
     }
 }
 
-final class ImmutableEitherSerializer[A, B](peer1: ImmutableSerializer[A],
-                                            peer2: ImmutableSerializer[B])
-  extends ImmutableSerializer[Either[A, B]] {
+final class ConstEitherFormat[A, B](peer1: ConstFormat[A],
+                                    peer2: ConstFormat[B])
+  extends ConstFormat[Either[A, B]] {
 
   def write(either: Either[A, B], out: DataOutput): Unit =
     either match {

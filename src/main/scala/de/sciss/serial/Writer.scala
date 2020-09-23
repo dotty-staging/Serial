@@ -11,8 +11,7 @@
  * contact@sciss.de
  */
 
-package de.sciss
-package serial
+package de.sciss.serial
 
 import de.sciss.serial.impl.{CollectionWriter, EitherWriter, MapWriter, OptionWriter, Tuple2Writer, Tuple3Writer}
 
@@ -56,7 +55,7 @@ trait WriterLoPri {
 }
 
 object Writer extends WriterLoPri {
-  implicit def serializer[Tx, Acc, A](implicit peer: Serializer[Tx, Acc, A]): Writer[A] = peer
+  implicit def serializer[T, A](implicit peer: TFormat[T, A]): Writer[A] = peer
 }
 trait Writer[-A] {
   def write(v: A, out: DataOutput): Unit

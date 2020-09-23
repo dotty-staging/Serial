@@ -11,12 +11,20 @@
  * contact@sciss.de
  */
 
-package de.sciss
-package serial
+package de.sciss.serial
 
-object Reader {
-  type Immutable[A] = Reader[Any, Any, A]
+object TReader {
+  type Const[A] = TReader[Any, A]
 }
-trait Reader[-Tx, -Acc, +A] {
-  def read(in: DataInput, access: Acc)(implicit tx: Tx): A
+
+trait Reader[+A] {
+  def read(in: DataInput): A
+}
+
+trait TReader[-T, +A] {
+  def readT(in: DataInput)(implicit tx: T): A
+}
+
+trait ConstReader[+A] extends TReader[Any, A] with Reader[A] {
+  final def readT(in: DataInput)(implicit tx: Any): A = read(in)
 }

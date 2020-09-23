@@ -14,25 +14,25 @@
 package de.sciss.serial
 package impl
 
-final class Tuple2Serializer[Tx, Acc, A1, A2](peer1: Serializer[Tx, Acc, A1],
-                                              peer2: Serializer[Tx, Acc, A2])
-  extends Serializer[Tx, Acc, (A1, A2)] {
+final class Tuple2TFormat[-T, A1, A2](peer1: TFormat[T, A1],
+                                      peer2: TFormat[T, A2])
+  extends TFormat[T, (A1, A2)] {
 
   def write(tup: (A1, A2), out: DataOutput): Unit = {
     peer1.write(tup._1, out)
     peer2.write(tup._2, out)
   }
 
-  def read(in: DataInput, acc: Acc)(implicit tx: Tx): (A1, A2) = {
-    val a1 = peer1.read(in, acc)
-    val a2 = peer2.read(in, acc)
+  def readT(in: DataInput)(implicit tx: T): (A1, A2) = {
+    val a1 = peer1.readT(in)
+    val a2 = peer2.readT(in)
     (a1, a2)
   }
 }
 
-final class ImmutableTuple2Serializer[A1, A2](peer1: ImmutableSerializer[A1],
-                                              peer2: ImmutableSerializer[A2])
-  extends ImmutableSerializer[(A1, A2)] {
+final class ConstTuple2Format[A1, A2](peer1: ConstFormat[A1],
+                                      peer2: ConstFormat[A2])
+  extends ConstFormat[(A1, A2)] {
 
   def write(tup: (A1, A2), out: DataOutput): Unit = {
     peer1.write(tup._1, out)

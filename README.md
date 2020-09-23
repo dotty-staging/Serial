@@ -22,16 +22,19 @@ The following dependency is necessary:
 
     "de.sciss" %% "serial" % v
 
-The current version `v` is `"1.1.3`".
+The current version `v` is `"2.0.0`".
 
 ## example
+
+In most cases, you want to serialize immutable objects such as instances of `case` classes. For those, the
+`ConstFormat` is used.
 
 ```scala
 import de.sciss.serial._
 
 case class Person(name: String, age: Int)
 
-implicit object PersonSerializer extends ImmutableSerializer[Person] {
+implicit object PersonSerializer extends ConstFormat[Person] {
   def write(v: Person, out: DataOutput): Unit = {
     out.writeUTF(v.name)
     out.writeInt(v.age)
@@ -46,7 +49,7 @@ implicit object PersonSerializer extends ImmutableSerializer[Person] {
 
 val p   = Person("Nelson", 94)
 val out = DataOutput()
-val ser = implicitly[ImmutableSerializer[Person]]
+val ser = implicitly[ConstFormat[Person]]
 ser.write(p, out)
 val bin = out.toByteArray
 
@@ -58,3 +61,10 @@ assert(p == q)
 
 There are serializers included for the standard primitive types and common extensions such
 as `Option`, `Either`, `Tuple2`, `List` etc.
+
+## Transactional provision
+
+The library is mainly used in conjunction with the [Lucre](https://github.com/Sciss/Lucre) framework, where 
+transactional context is needed. Here the types are `TReader`, `TWriter` and `TFormat` which provide an additional
+type parameter for the implicitly passed transaction. Since `ConstReader[A]` and `ConstFormat[A]` extend
+ `TReader[Any A]` and `TFormat[Any, A]`, the latter can be used throughout.

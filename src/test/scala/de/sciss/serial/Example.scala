@@ -3,7 +3,7 @@ package de.sciss.serial
 trait Example {
   case class Person(name: String, age: Int)
 
-  implicit object PersonSerializer extends ImmutableSerializer[Person] {
+  implicit object PersonFormat$ extends ConstFormat[Person] {
     def write(v: Person, out: DataOutput): Unit = {
       out.writeUTF(v.name)
       out.writeInt(v.age)
@@ -18,7 +18,7 @@ trait Example {
 
   val p   = Person("Nelson", 94)
   val out = DataOutput()
-  val ser = implicitly[ImmutableSerializer[Person]]
+  val ser = implicitly[ConstFormat[Person]]
   ser.write(p, out)
   val bin = out.toByteArray
 
