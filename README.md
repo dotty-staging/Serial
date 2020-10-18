@@ -10,11 +10,12 @@ of byte array or file backed up data streams.
 
 Serial is (C)opyright 2011&ndash;2020 by Hanns Holger Rutz. All rights reserved. It is released under 
 the [GNU Lesser General Public License](https://raw.github.com/Sciss/Serial/main/LICENSE) and comes with 
-absolutely no warranties. To contact the author, send an e-mail to `contact at sciss.de`
+absolutely no warranties. To contact the author, send an e-mail to `contact at sciss.de`.
 
 ## requirements / installation
 
-The project builds with sbt against Scala 2.13, 2.12. The last version to support Scala 2.11 was v1.1.1.
+The project builds with sbt against Scala 2.13, 2.12 (JVM) and Scala 2.13 (JS). 
+The last version to support Scala 2.11 was v1.1.1.
 
 ## linking
 

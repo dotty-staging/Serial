@@ -4,6 +4,7 @@ import java.io.File
 
 import org.scalatest.funsuite.AnyFunSuite
 
+// runs on the JVM only
 class FileSuite extends AnyFunSuite {
   test("file based (de)serialization is run on various primitives") {
     val f = File.createTempFile("serial", ".test")
