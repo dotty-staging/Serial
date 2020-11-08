@@ -14,7 +14,7 @@ absolutely no warranties. To contact the author, send an e-mail to `contact at s
 
 ## requirements / installation
 
-The project builds with sbt against Scala 2.13, 2.12 (JVM) and Scala 2.13 (JS). 
+The project builds with sbt against Scala 2.13, 2.12, Dotty (JVM) and Scala 2.13 (JS). 
 The last version to support Scala 2.11 was v1.1.1.
 
 ## linking

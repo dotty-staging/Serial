@@ -23,8 +23,10 @@ lazy val commonSettings = Seq(
   licenses           := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt")),
   scalaVersion       := "2.13.3",
   mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion),
-  libraryDependencies += {
-    "org.scalatest" %%% "scalatest" % deps.test.scalaTest % Test
+  libraryDependencies ++= {
+    if (isDotty.value) Nil else Seq(
+      "org.scalatest" %%% "scalatest" % deps.test.scalaTest % Test,
+    )
   },
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-encoding", "utf8", "-Xlint", "-Xsource:2.13"),
   scalacOptions in (Compile, compile) ++= {
@@ -35,7 +37,10 @@ lazy val commonSettings = Seq(
     }
   },
   testOptions in Test += Tests.Argument("-oDF"),   // ScalaTest: durations and full stack traces
-  parallelExecution in Test := false
+  parallelExecution in Test := false,
+  unmanagedSourceDirectories in Test := {
+    if (isDotty.value) Nil else (unmanagedSourceDirectories in Test).value  // while ScalaTest is unavailable
+  },
 )
 
 // ---- publishing ----
