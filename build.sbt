@@ -11,14 +11,14 @@ lazy val deps = new {
 }
 
 lazy val commonJvmSettings = Seq(
-  crossScalaVersions := Seq("0.27.0-RC1", "2.13.3", "2.12.12"),
+  crossScalaVersions := Seq("3.0.0-M1", "2.13.3", "2.12.12"),
 )
 
 lazy val commonSettings = Seq(
   name               := baseName,
   version            := projectVersion,
   organization       := "de.sciss",
-  description        := "Extension of Scala-STM, adding optional durability layer, and providing API for confluent and reactive event layers",
+  description        := "Simple binary serialization library for Scala",
   homepage           := Some(url(s"https://git.iem.at/sciss/${name.value}")),
   licenses           := Seq("LGPL v2.1+" -> url( "http://www.gnu.org/licenses/lgpl-2.1.txt")),
   scalaVersion       := "2.13.3",
