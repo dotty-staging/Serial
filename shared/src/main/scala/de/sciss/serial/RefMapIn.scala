@@ -15,11 +15,11 @@ package de.sciss.serial
 
 import scala.annotation.switch
 import scala.collection.immutable.{IndexedSeq => Vec}
-import scala.collection.{mutable, Map => CMap}
+import scala.collection.mutable
 
-trait ProductReader[+A] {
-  def read(in: RefMapIn, prefix: String, arity: Int): A
-}
+//trait ProductReader[-M, +A] {
+//  def read(in: M, prefix: String, arity: Int): A
+//}
 
 /** Building block for deserializing `Product` based type hierarchies.
   *
@@ -48,20 +48,27 @@ trait ProductReader[+A] {
   * Sub-classes may want to patch into `readCustomElem` and `readCustomProduct`
   * to handle specific new types.
   *
-  * @param  in0       the binary input to read from
-  * @param  mapRead   the registry of product readers
+  * @param  in0   the binary input to read from
   */
-class RefMapIn(in0: DataInput, mapRead: CMap[String, ProductReader[Product]]) {
+abstract class RefMapIn[Repr](in0: DataInput) {
+  self: Repr =>
+
+  // ---- abstract ----
+
   type Const <: Product
   type R
   type U
   type Y
   type E
 
+  protected def readProductWithKey(key: String, arity: Int): Product
+
+  // ---- impl ----
+
   private[this] val map   = mutable.Map.empty[Int, Product]
   private[this] var count = 0
 
-  def in: DataInput = in0
+  final def in: DataInput = in0
 
   def readElem(): Any = {
     val cookie = in.readByte().toChar
@@ -90,17 +97,17 @@ class RefMapIn(in0: DataInput, mapRead: CMap[String, ProductReader[Product]]) {
       case _  => readCustomElem(cookie)
     }
 
-  protected def unexpectedCookie(cookie: Char): Nothing =
+  final protected def unexpectedCookie(cookie: Char): Nothing =
     sys.error(s"Unexpected cookie '$cookie'")
 
-  protected def unexpectedCookie(cookie: Char, expected: Char): Nothing =
+  final protected def unexpectedCookie(cookie: Char, expected: Char): Nothing =
     sys.error(s"Unexpected cookie '$cookie' is not '$expected'")
 
   protected def readCustomElem(cookie: Char): Any =
     unexpectedCookie(cookie)
 
   /** Like `readProduct` but casts the result (unsafe) */
-  def readProductT[A <: Product](): A =
+  final def readProductT[A <: Product](): A =
     readProduct().asInstanceOf[A]
 
   def readProduct(): Product = {
@@ -117,9 +124,8 @@ class RefMapIn(in0: DataInput, mapRead: CMap[String, ProductReader[Product]]) {
         val nm      = prefix0.length - 1
         // we store prefixes now always without trailing `$` character, even for case objects
         val prefix  = if (prefix0.charAt(nm) == '$') prefix0.substring(0, nm) else prefix0
-        val r       = mapRead.getOrElse(prefix, throw new NoSuchElementException(s"Unknown element '$prefix'"))
         val arity   = in.readShort().toInt
-        val res     = r.read(this, prefix, arity)
+        val res     = readProductWithKey(prefix, arity)
         val id      = count
         map    += ((id, res))
         count   = id + 1
@@ -143,13 +149,7 @@ class RefMapIn(in0: DataInput, mapRead: CMap[String, ProductReader[Product]]) {
   protected def readIdentifiedY(): Y  = throw new NotImplementedError()
   protected def readIdentifiedE(): E  = throw new NotImplementedError()
 
-//  def readGraph(): Y = {
-//    val cookie = in0.readByte().toChar
-//    if (cookie != 'Y') unexpectedCookie(cookie, 'Y')
-//    readIdentifiedY()
-//  }
-
-  def readVec[A](elem: => A): Vec[A] = {
+  final def readVec[A](elem: => A): Vec[A] = {
     val cookie = in0.readByte().toChar
     if (cookie != 'X') unexpectedCookie(cookie, 'X')
     readIdentifiedVec(elem)
@@ -160,7 +160,7 @@ class RefMapIn(in0: DataInput, mapRead: CMap[String, ProductReader[Product]]) {
     Vector.fill(size)(elem)
   }
 
-  def readSet[A](elem: => A): Set[A] = {
+  final def readSet[A](elem: => A): Set[A] = {
     val cookie = in0.readByte().toChar
     if (cookie != 'T') unexpectedCookie(cookie, 'T')
     readIdentifiedSet(elem)
@@ -178,7 +178,7 @@ class RefMapIn(in0: DataInput, mapRead: CMap[String, ProductReader[Product]]) {
     b.result()
   }
 
-  def readMap[K, V](key: => K, value: => V): Map[K, V] = {
+  final def readMap[K, V](key: => K, value: => V): Map[K, V] = {
     val cookie = in0.readByte().toChar
     if (cookie != 'M') unexpectedCookie(cookie, 'M')
     readIdentifiedMap(key, value)
@@ -198,48 +198,48 @@ class RefMapIn(in0: DataInput, mapRead: CMap[String, ProductReader[Product]]) {
     b.result()
   }
 
-  def readInt(): Int = {
+  final def readInt(): Int = {
     val cookie = in0.readByte().toChar
     if (cookie != 'I') unexpectedCookie(cookie, 'I')
     in0.readInt()
   }
 
-  def readIntVec(): Vec[Int] = readVec(readInt())
+  final def readIntVec(): Vec[Int] = readVec(readInt())
 
-  def readBoolean(): Boolean = {
+  final def readBoolean(): Boolean = {
     val cookie = in0.readByte().toChar
     if (cookie != 'B') unexpectedCookie(cookie, 'B')
     in0.readBoolean()
   }
 
-  def readString(): String = {
+  final def readString(): String = {
     val cookie = in0.readByte().toChar
     if (cookie != 'S') unexpectedCookie(cookie, 'S')
     in0.readUTF()
   }
 
-  def readOption[A](elem: => A): Option[A] = {
+  final def readOption[A](elem: => A): Option[A] = {
     val cookie = in0.readByte().toChar
     if (cookie != 'O') unexpectedCookie(cookie, 'O')
     val defined = in.readBoolean()
     if (defined) Some(elem) else None
   }
 
-  def readStringOption(): Option[String] = readOption(readString())
+  final def readStringOption(): Option[String] = readOption(readString())
 
-  def readFloat(): Float = {
+  final def readFloat(): Float = {
     val cookie = in0.readByte().toChar
     if (cookie != 'F') unexpectedCookie(cookie, 'F')
     in.readFloat()
   }
 
-  def readFloatVec (): Vec[Float  ] = readVec(readFloat ())
+  final def readFloatVec (): Vec[Float  ] = readVec(readFloat ())
 
-  def readDouble(): Double = {
+  final def readDouble(): Double = {
     val cookie = in0.readByte().toChar
     if (cookie != 'D') unexpectedCookie(cookie, 'D')
     in.readDouble()
   }
 
-  def readDoubleVec(): Vec[Double ] = readVec(readDouble())
+  final def readDoubleVec(): Vec[Double ] = readVec(readDouble())
 }

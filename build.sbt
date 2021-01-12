@@ -32,7 +32,10 @@ lazy val commonSettings = Seq(
       "org.scalatest" %%% "scalatest" % deps.test.scalaTest % Test,
     )
   },
-  scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-encoding", "utf8", "-Xlint", "-Xsource:2.13"),
+  scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-encoding", "utf8"),
+  scalacOptions ++= {
+    if (isDotty.value) Nil else Seq("-Xlint", "-Xsource:2.13")
+  },
   scalacOptions in (Compile, compile) ++= {
     val dot = isDotty.value
     if (!dot && scala.util.Properties.isJavaAtLeast("9")) {
