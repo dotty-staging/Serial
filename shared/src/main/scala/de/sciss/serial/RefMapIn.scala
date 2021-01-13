@@ -17,10 +17,6 @@ import scala.annotation.switch
 import scala.collection.immutable.{IndexedSeq => Vec}
 import scala.collection.mutable
 
-//trait ProductReader[-M, +A] {
-//  def read(in: M, prefix: String, arity: Int): A
-//}
-
 /** Building block for deserializing `Product` based type hierarchies.
   *
   * By default, the following type tags are supported:

@@ -49,7 +49,7 @@ class RefMapOut(out0: DataOutput) {
 
   final def out: DataOutput = out0
 
-  protected def isDefaultPackage(className: String): Boolean = false
+  protected def isDefaultPackage(pck: String): Boolean = false
 
   def writeProduct(p: Product): Unit = {
     val id0Ref = ref.get(p)
@@ -63,12 +63,13 @@ class RefMapOut(out0: DataOutput) {
     // val pck     = p.getClass.getPackage.getName
     // Java 9+:
     // val pck     = p.getClass.getPackageName
-    val cn      = p.getClass.getName
-    // val name    = if (pck == SupportedPck) prefix else s"$pck.$prefix"
-    val name    = if (isDefaultPackage(cn) /*cn.startsWith(SupportedPck)*/) p.productPrefix else {
-      val nm  = cn.length - 1
-      if (cn.charAt(nm) == '$') cn.substring(0, nm) else cn
+    val cn    = p.getClass.getName
+    val pck   = {
+      val i = cn.lastIndexOf('.')
+      if (i != -1) cn.substring(0, i) else ""
     }
+    val prefix  = p.productPrefix
+    val name    = if (isDefaultPackage(pck)) prefix else s"$pck.$prefix"
     out.writeUTF(name)
     out.writeShort(p.productArity)
     writeIdentifiedProduct(p)
