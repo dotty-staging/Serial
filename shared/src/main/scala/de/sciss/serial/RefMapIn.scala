@@ -202,6 +202,12 @@ abstract class RefMapIn[Repr](in0: DataInput) {
 
   final def readIntVec(): Vec[Int] = readVec(readInt())
 
+  final def readLong(): Long = {
+    val cookie = in0.readByte().toChar
+    if (cookie != 'L') unexpectedCookie(cookie, 'L')
+    in0.readLong()
+  }
+
   final def readBoolean(): Boolean = {
     val cookie = in0.readByte().toChar
     if (cookie != 'B') unexpectedCookie(cookie, 'B')
