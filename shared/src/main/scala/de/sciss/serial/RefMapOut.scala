@@ -107,7 +107,7 @@ class RefMapOut(out0: DataOutput) {
     out.writeByte('O')
     val b = x.isDefined
     out.writeBoolean(b)
-    if (b) elem
+    if (b) elem(x.get)
   }
 
   final def writeInt(i: Int): Unit = {
