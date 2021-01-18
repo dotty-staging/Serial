@@ -77,7 +77,7 @@ abstract class RefMapIn[Repr](in0: DataInput) {
       case 'X' => readIdentifiedVec(readElem())
       case 'M' => readIdentifiedMap(readElem(), readElem())
       case 'T' => readIdentifiedSet(readElem())
-      case 'P' | '<' => readProductWithCookie(cookie)
+      case 'P' | '<' | 'C' => readProductWithCookie(cookie)
       case 'R' => readIdentifiedR()
       case 'I' => in.readInt()
       case 'L' => in.readLong()
