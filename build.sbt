@@ -1,7 +1,7 @@
 lazy val baseName       = "Serial"
 lazy val baseNameL      = baseName.toLowerCase
 
-lazy val projectVersion = "2.0.1-SNAPSHOT"
+lazy val projectVersion = "2.0.1"
 lazy val mimaVersion    = "2.0.0"
 
 lazy val deps = new {
