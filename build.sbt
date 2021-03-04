@@ -28,16 +28,16 @@ lazy val commonSettings = Seq(
   scalaVersion       := "2.13.4",
   mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion),
   libraryDependencies ++= {
-    if (isDotty.value) Nil else Seq(
+    if (scalaVersion.value.startsWith("3")) Nil else Seq(
       "org.scalatest" %%% "scalatest" % deps.test.scalaTest % Test,
     )
   },
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-encoding", "utf8"),
   scalacOptions ++= {
-    if (isDotty.value) Nil else Seq("-Xlint", "-Xsource:2.13")
+    if (scalaVersion.value.startsWith("3")) Nil else Seq("-Xlint", "-Xsource:2.13")
   },
   scalacOptions in (Compile, compile) ++= {
-    val dot = isDotty.value
+    val dot = scalaVersion.value.startsWith("3")
     if (!dot && scala.util.Properties.isJavaAtLeast("9")) {
       Seq("-release", "8")   // JDK >8 breaks API; skip scala-doc
     } else {
@@ -47,7 +47,7 @@ lazy val commonSettings = Seq(
   testOptions in Test += Tests.Argument("-oDF"),   // ScalaTest: durations and full stack traces
   parallelExecution in Test := false,
   unmanagedSourceDirectories in Test := {
-    if (isDotty.value) Nil else (unmanagedSourceDirectories in Test).value  // while ScalaTest is unavailable
+    if (scalaVersion.value.startsWith("3")) Nil else (unmanagedSourceDirectories in Test).value  // while ScalaTest is unavailable
   },
 )
 
