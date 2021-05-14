@@ -6,12 +6,12 @@ lazy val mimaVersion    = "2.0.0"
 
 lazy val deps = new {
   val test = new {
-    val scalaTest = "3.2.3"
+    val scalaTest = "3.2.9"
   }
 }
 
 lazy val commonJvmSettings = Seq(
-  crossScalaVersions := Seq("3.0.0-RC1", "2.13.4", "2.12.13"),
+  crossScalaVersions := Seq("3.0.0", "2.13.4", "2.12.13"),
 )
 
 // sonatype plugin requires that these are in global
@@ -28,17 +28,19 @@ lazy val commonSettings = Seq(
   scalaVersion       := "2.13.4",
   mimaPreviousArtifacts := Set("de.sciss" %% baseNameL % mimaVersion),
   libraryDependencies ++= {
-    if (isDotty.value) Nil else Seq(
+    // if (isDotty.value) Nil else 
+    Seq(
       "org.scalatest" %%% "scalatest" % deps.test.scalaTest % Test,
     )
   },
   scalacOptions ++= Seq("-deprecation", "-unchecked", "-feature", "-encoding", "utf8"),
   scalacOptions ++= {
-    if (isDotty.value) Nil else Seq("-Xlint", "-Xsource:2.13")
+    // if (isDotty.value) Nil else 
+    Seq("-Xlint", "-Xsource:2.13")
   },
   scalacOptions in (Compile, compile) ++= {
-    val dot = isDotty.value
-    if (!dot && scala.util.Properties.isJavaAtLeast("9")) {
+    // val dot = isDotty.value
+    if (/* !dot && */ scala.util.Properties.isJavaAtLeast("9")) {
       Seq("-release", "8")   // JDK >8 breaks API; skip scala-doc
     } else {
       Nil
@@ -46,9 +48,9 @@ lazy val commonSettings = Seq(
   },
   testOptions in Test += Tests.Argument("-oDF"),   // ScalaTest: durations and full stack traces
   parallelExecution in Test := false,
-  unmanagedSourceDirectories in Test := {
-    if (isDotty.value) Nil else (unmanagedSourceDirectories in Test).value  // while ScalaTest is unavailable
-  },
+  // unmanagedSourceDirectories in Test := {
+  //   if (isDotty.value) Nil else (unmanagedSourceDirectories in Test).value  // while ScalaTest is unavailable
+  // },
 )
 
 // ---- publishing ----
